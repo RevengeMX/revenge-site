@@ -150,64 +150,158 @@ export default function ContactForm({
               isLight ? 'bg-white border-neutral-200 shadow-xl' : 'bg-neutral-900/60 border-neutral-800/90 shadow-2xl backdrop-blur-xl'
             }`}>
               
-              <iframe
-                id="hidden7482990000000634003Frame"
-                name="hidden7482990000000634003Frame"
-                style={{ display: 'none' }}
-                className="w-full h-full border-none"
-              />
-
-              {submitted && (
-                <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-mono flex items-center justify-between">
-                  <span>✓ ¡Solicitud enviada! Nos pondremos en contacto a la brevedad.</span>
-                  <button onClick={() => setSubmitted(false)} className="text-xs text-white underline ml-4">
-                    Enviar otro
+              {submitted ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+                  <div className="w-16 h-16 bg-brand-orange/10 rounded-full flex items-center justify-center mb-2">
+                    <Sparkles className="w-8 h-8 text-brand-orange" />
+                  </div>
+                  <h3 className={`text-xl font-bold ${isLight ? 'text-neutral-900' : 'text-white'}`}>
+                    ¡Solicitud enviada con éxito!
+                  </h3>
+                  <p className={`text-sm max-w-sm ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
+                    Nos pondremos en contacto contigo a la brevedad para programar la llamada de diagnóstico.
+                  </p>
+                  <button 
+                    onClick={() => setSubmitted(false)} 
+                    className="mt-6 text-sm font-semibold text-brand-orange hover:text-brand-orange/80 underline underline-offset-4"
+                  >
+                    Enviar otro mensaje
                   </button>
                 </div>
-              )}
-
-              <form
-                id="BiginWebToRecordForm7482990000000634003"
-                name="BiginWebToRecordForm7482990000000634003"
-                action="https://bigin.zoho.com/crm/WebToContactForm"
-                method="POST"
-                target="hidden7482990000000634003Frame"
-                acceptCharset="UTF-8"
-                onSubmit={() => {
-                  setSubmitted(true);
-                  onTrackEvent({
-                    platform: 'Both',
-                    eventName: 'Lead',
-                    data: {
-                      form_name: 'bigin_contact_form',
-                      lead_source: 'sitio_oficial_revenge'
+              ) : (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const formData = new FormData(form);
+                    
+                    try {
+                      // Usar fetch con 'no-cors' simula el envío del formulario HTML nativo
+                      // sin recargar la página y evita el error "form is not connected".
+                      // Bigin procesará los datos, aunque no podamos leer la respuesta por la política CORS.
+                      await fetch('https://bigin.zoho.com/crm/WebToContactForm', {
+                        method: 'POST',
+                        body: formData,
+                        mode: 'no-cors'
+                      });
+                    } catch (error) {
+                      console.error('Error enviando formulario a Bigin:', error);
                     }
-                  });
-                }}
-                className="space-y-5"
-              >
-                {/* Hidden Fields for Bigin CRM */}
-                <input type="hidden" name="xnQsjsdp" value={biginXnQsjsdp} />
-                <input type="hidden" name="zc_gad" id="zc_gad" value="" />
-                <input type="hidden" name="xmIwtLD" value={biginXmIwtLD} />
-                <input type="hidden" name="actionType" value="Q29udGFjdHM=" />
-                <input type="hidden" name="rmsg" id="rmsg" value="true" />
-                <input type="hidden" name="returnURL" value="null" />
 
-                {/* Form Inputs Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  
-                  {/* Nombre */}
+                    setSubmitted(true);
+                    onTrackEvent({
+                      platform: 'Both',
+                      eventName: 'Lead',
+                      data: {
+                        form_name: 'bigin_contact_form',
+                        lead_source: 'sitio_oficial_revenge'
+                      }
+                    });
+                  }}
+                  className="space-y-5"
+                >
+                  {/* Hidden Fields for Bigin CRM */}
+                  <input type="hidden" name="xnQsjsdp" value={biginXnQsjsdp} />
+                  <input type="hidden" name="zc_gad" id="zc_gad" value="" />
+                  <input type="hidden" name="xmIwtLD" value={biginXmIwtLD} />
+                  <input type="hidden" name="actionType" value="Q29udGFjdHM=" />
+                  <input type="hidden" name="rmsg" id="rmsg" value="true" />
+                  <input type="hidden" name="returnURL" value="null" />
+
+                  {/* Form Inputs Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    
+                    {/* Nombre */}
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                        Nombre
+                      </label>
+                      <input
+                        name="First Name"
+                        maxLength={40}
+                        type="text"
+                        placeholder="Ej. Fulanito"
+                        className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                          isLight
+                            ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                            : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                        }`}
+                      />
+                    </div>
+
+                    {/* Apellidos (Mandatorio en Bigin) */}
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                        Apellidos <span className="text-brand-orange">*</span>
+                      </label>
+                      <input
+                        name="Last Name"
+                        maxLength={80}
+                        type="text"
+                        required
+                        placeholder="Ej. Rodríguez"
+                        className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                          isLight
+                            ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                            : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                        }`}
+                      />
+                    </div>
+
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    
+                    {/* Correo Electrónico */}
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                        Correo electrónico <span className="text-brand-orange">*</span>
+                      </label>
+                      <input
+                        name="Email"
+                        maxLength={100}
+                        type="email"
+                        required
+                        placeholder="contacto@empresa.com"
+                        className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                          isLight
+                            ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                            : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                        }`}
+                      />
+                    </div>
+
+                    {/* Teléfono */}
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                        Teléfono
+                      </label>
+                      <input
+                        name="Phone"
+                        maxLength={50}
+                        type="tel"
+                        placeholder="+52 55 1234 5678"
+                        className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                          isLight
+                            ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                            : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                        }`}
+                      />
+                    </div>
+
+                  </div>
+
+                  {/* Descripción / Requerimiento */}
                   <div className="space-y-1.5">
                     <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
-                      Nombre
+                      Descripción de tu Proyecto / Requerimiento
                     </label>
-                    <input
-                      name="First Name"
-                      maxLength={40}
-                      type="text"
-                      placeholder="Ej. Fulanito"
-                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                    <textarea
+                      name="Description"
+                      maxLength={32000}
+                      rows={4}
+                      placeholder="Platícanos sobre tus objetivos, ecosistema actual o necesidades tecnológicas..."
+                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors resize-y ${
                         isLight
                           ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
                           : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
@@ -215,110 +309,32 @@ export default function ContactForm({
                     />
                   </div>
 
-                  {/* Apellidos (Mandatorio en Bigin) */}
-                  <div className="space-y-1.5">
-                    <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
-                      Apellidos <span className="text-brand-orange">*</span>
-                    </label>
-                    <input
-                      name="Last Name"
-                      maxLength={80}
-                      type="text"
-                      required
-                      placeholder="Ej. Rodríguez"
-                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
-                        isLight
-                          ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
-                          : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
-                      }`}
-                    />
+                  {/* Submit Button */}
+                  <div className="pt-2">
+                    <button
+                      id="formsubmit"
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-brand-orange to-brand-red hover:shadow-[0_0_30px_rgba(255,94,58,0.4)] text-white text-xs font-extrabold uppercase tracking-wider py-4 rounded-xl transition-all cursor-pointer shadow-lg border-none flex items-center justify-center gap-2"
+                    >
+                      <span>{displaySubmitText}</span>
+                    </button>
                   </div>
 
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  
-                  {/* Correo Electrónico */}
-                  <div className="space-y-1.5">
-                    <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
-                      Correo electrónico
-                    </label>
-                    <input
-                      name="Email"
-                      maxLength={100}
-                      type="email"
-                      placeholder="contacto@empresa.com"
-                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
-                        isLight
-                          ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
-                          : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
-                      }`}
-                    />
+                  {/* Powered By Zoho Bigin footer */}
+                  <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                    <span>Con tecnología de <strong className={isLight ? 'text-neutral-800' : 'text-neutral-300'}>Bigin by Zoho</strong></span>
+                    <a
+                      href="https://www.zoho.com/report-abuse"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-neutral-500 hover:text-brand-orange underline text-[10px]"
+                    >
+                      Notificar abuso
+                    </a>
                   </div>
 
-                  {/* Teléfono */}
-                  <div className="space-y-1.5">
-                    <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
-                      Teléfono
-                    </label>
-                    <input
-                      name="Phone"
-                      maxLength={50}
-                      type="tel"
-                      placeholder="+52 55 1234 5678"
-                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
-                        isLight
-                          ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
-                          : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
-                      }`}
-                    />
-                  </div>
-
-                </div>
-
-                {/* Descripción / Requerimiento */}
-                <div className="space-y-1.5">
-                  <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
-                    Descripción de tu Proyecto / Requerimiento
-                  </label>
-                  <textarea
-                    name="Description"
-                    maxLength={32000}
-                    rows={4}
-                    placeholder="Platícanos sobre tus objetivos, ecosistema actual o necesidades tecnológicas..."
-                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors resize-y ${
-                      isLight
-                        ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
-                        : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
-                    }`}
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <div className="pt-2">
-                  <button
-                    id="formsubmit"
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-brand-orange to-brand-red hover:shadow-[0_0_30px_rgba(255,94,58,0.4)] text-white text-xs font-extrabold uppercase tracking-wider py-4 rounded-xl transition-all cursor-pointer shadow-lg border-none flex items-center justify-center gap-2"
-                  >
-                    <span>{displaySubmitText}</span>
-                  </button>
-                </div>
-
-                {/* Powered By Zoho Bigin footer */}
-                <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[11px] font-mono text-neutral-500">
-                  <span>Con tecnología de <strong className={isLight ? 'text-neutral-800' : 'text-neutral-300'}>Bigin by Zoho</strong></span>
-                  <a
-                    href="https://www.zoho.com/report-abuse"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-neutral-500 hover:text-brand-orange underline text-[10px]"
-                  >
-                    Notificar abuso
-                  </a>
-                </div>
-
-              </form>
+                </form>
+              )}
 
             </div>
           </div>
