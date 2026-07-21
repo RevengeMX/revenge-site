@@ -102,6 +102,8 @@ export default function Partners({
                         <img 
                           src={partner.logoImage.asset.url} 
                           alt={partner.name || 'Partner Logo'} 
+                          loading="lazy"
+                          decoding="async"
                           className="max-h-6 max-w-[80px] object-contain"
                         />
                       </div>
