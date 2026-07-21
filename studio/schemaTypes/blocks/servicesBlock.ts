@@ -8,6 +8,12 @@ export const servicesBlock = defineType({
   icon: ThListIcon,
   fields: [
     defineField({
+      name: 'badgeText',
+      title: 'Etiqueta Superior (Badge)',
+      type: 'string',
+      initialValue: 'Capacidades de Consultoría Digital',
+    }),
+    defineField({
       name: 'title',
       title: 'Section Title',
       type: 'string',

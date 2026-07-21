@@ -146,6 +146,14 @@ export const siteSettings = defineType({
       ],
     }),
     defineField({
+      name: 'showThemeToggleInHeader',
+      title: 'Mostrar conmutador de tema (Sol/Luna) en el Header',
+      type: 'boolean',
+      group: 'content',
+      initialValue: true,
+      description: 'Si se activa, muestra el botón para alternar Modo Claro/Oscuro en el menú de navegación superior. El botón del pie de página (footer) siempre estará visible.',
+    }),
+    defineField({
       name: 'footerDescription',
       title: 'Footer Brand Description',
       type: 'text',
