@@ -1,402 +1,330 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+'use client';
 
 import React, { useState } from 'react';
-import { Send, CheckCircle, RefreshCw, AlertCircle, Sparkles, Building2, User, Phone, Mail, HelpCircle, DollarSign } from 'lucide-react';
+import { Sparkles, Mail, Phone, Lock } from 'lucide-react';
 import { MarketingEvent } from '../types';
 
 interface ContactFormProps {
+  badgeText?: string;
+  title?: string;
+  subtitle?: string;
+  emailLabel?: string;
+  emailValue?: string;
+  phoneLabel?: string;
+  phoneValue?: string;
+  phoneLink?: string;
+  securityTitle?: string;
+  securityDescription?: string;
+  xnQsjsdp?: string;
+  xmIwtLD?: string;
+  submitButtonText?: string;
+  gtmEventName?: string;
+  theme?: 'dark' | 'light';
   onTrackEvent: (event: Omit<MarketingEvent, 'id' | 'timestamp'>) => void;
 }
 
-export default function ContactForm({ onTrackEvent }: ContactFormProps) {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    company: '',
-    companySize: '1-10',
-    service: 'ecommerce_shopify',
-    budget: '5k-15k',
-    message: ''
-  });
+export default function ContactForm({
+  badgeText,
+  title,
+  subtitle,
+  emailLabel,
+  emailValue,
+  phoneLabel,
+  phoneValue,
+  phoneLink,
+  securityTitle,
+  securityDescription,
+  xnQsjsdp,
+  xmIwtLD,
+  submitButtonText,
+  theme = 'dark',
+  onTrackEvent
+}: ContactFormProps) {
+  const isLight = theme === 'light';
+  const [submitted, setSubmitted] = useState(false);
 
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  // If Sanity supplies empty string or null, fallback or conditionally hide
+  const displayBadge = badgeText !== undefined ? badgeText : 'Hablemos de tu Proyecto';
+  const displayTitle = title !== undefined ? title : 'Transformemos tu Presencia Digital';
+  const displaySubtitle = subtitle !== undefined ? subtitle : 'Completa la información y nos pondremos en contacto contigo en menos de 24 horas hábiles para programar una llamada de diagnóstico técnico sin costo.';
+  
+  const displayEmailLabel = emailLabel !== undefined ? emailLabel : 'Email Corporativo';
+  const displayEmailValue = emailValue !== undefined ? emailValue : 'hola@revenge.agency';
+  
+  const displayPhoneLabel = phoneLabel !== undefined ? phoneLabel : '';
+  const displayPhoneValue = phoneValue !== undefined ? phoneValue : '';
+  const displayPhoneLink = phoneLink !== undefined ? phoneLink : '';
+  
+  const displaySecurityTitle = securityTitle !== undefined ? securityTitle : 'Integración Segura CRM (Bigin by Zoho)';
+  const displaySecurityDesc = securityDescription !== undefined ? securityDescription : 'Tus datos viajan cifrados directamente a nuestro sistema CRM Bigin bajo estrictas políticas de confidencialidad.';
+  const displaySubmitText = submitButtonText || 'Contactar';
 
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.fullName.trim()) newErrors.fullName = 'El nombre es obligatorio';
-    if (!formData.email.trim()) {
-      newErrors.email = 'El correo es obligatorio';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Formato de correo inválido';
-    }
-    if (!formData.company.trim()) newErrors.company = 'El nombre de tu empresa es obligatorio';
-    if (!formData.message.trim()) newErrors.message = 'Por favor, detalla brevemente tu requerimiento';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleFieldChange = (key: string, value: string) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
-    // Trigger step or field focus tracking event
-    onTrackEvent({
-      platform: 'GTM',
-      eventName: 'form_field_interaction',
-      data: {
-        field_id: key,
-        char_count: value.length,
-        form_name: 'contact_official_revenge'
-      }
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) {
-      onTrackEvent({
-        platform: 'Both',
-        eventName: 'lead_form_error',
-        data: {
-          error_fields: Object.keys(errors),
-          form_name: 'contact_official_revenge'
-        }
-      });
-      return;
-    }
-
-    setStatus('submitting');
-
-    // Trigger Lead form attempt event
-    onTrackEvent({
-      platform: 'GTM',
-      eventName: 'lead_submission_attempt',
-      data: {
-        service_selected: formData.service,
-        company_size: formData.companySize,
-        budget_bracket: formData.budget
-      }
-    });
-
-    // Simulate API Post with timeout
-    setTimeout(() => {
-      setStatus('success');
-
-      // Trigger GTM Lead Submission Success (Standard GTM Lead event)
-      onTrackEvent({
-        platform: 'Both',
-        eventName: 'Lead',
-        data: {
-          form_name: 'contact_official_revenge',
-          service_selected: formData.service,
-          company_size: formData.companySize,
-          budget_bracket: formData.budget,
-          currency: 'USD',
-          value: formData.budget === '5k-15k' ? 10000 : formData.budget === '15k-50k' ? 30000 : 75000,
-          lead_source: 'sitio_oficial_revenge',
-          hashed_email: 'sha256_' + btoa(formData.email).slice(0, 15) // Simulation of Meta advanced matching
-        }
-      });
-    }, 1500);
-  };
-
-  const resetForm = () => {
-    setFormData({
-      fullName: '',
-      email: '',
-      phone: '',
-      company: '',
-      companySize: '1-10',
-      service: 'ecommerce_shopify',
-      budget: '5k-15k',
-      message: ''
-    });
-    setStatus('idle');
-    setErrors({});
-  };
+  const biginXnQsjsdp = xnQsjsdp || 'c89333e5b18dc916843eb758f9590d84049a3d9220e08001403831ea2244de2f';
+  const biginXmIwtLD = xmIwtLD || '8c98928c34fe969c348950b0d09c4a5abd3902ea77f3e8f9da905dd432677fc41c267a089f9f2e4f61eb2ffb711116cc';
 
   return (
-    <section id="contact-section" className="py-24 bg-neutral-950 relative overflow-hidden">
-      {/* Abstract Grid and Gradient background elements */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293708_1px,transparent_1px),linear-gradient(to_bottom,#1f293708_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-orange/10 rounded-full filter blur-[120px] pointer-events-none"></div>
-      <div className="absolute top-1/4 left-10 w-72 h-72 bg-brand-red/10 rounded-full filter blur-[100px] pointer-events-none"></div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section id="contact" className={`py-24 border-t relative transition-colors duration-300 ${
+      isLight ? 'bg-neutral-50 border-neutral-200 text-neutral-800' : 'bg-neutral-950 border-neutral-800 text-white'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Panel: Trust parameters and contact descriptions */}
-          <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-28">
+          
+          {/* Left Column: Context & Direct Details */}
+          <div className="lg:col-span-5 space-y-8">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-mono">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>¿Iniciamos la transformación?</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                Diseñemos el futuro de tu negocio digital.
-              </h2>
-              <p className="text-neutral-400 text-sm sm:text-base leading-relaxed">
-                Tanto si buscas migrar a una arquitectura <span className="text-white font-semibold">Headless con Contento</span>, potenciar tu canal <span className="text-white font-semibold">Shopify</span> o rediseñar la experiencia UX/UI de tu negocio, el equipo técnico de <span className="text-white font-semibold">Revenge</span> está preparado para ejecutarlo.
-              </p>
+              {Boolean(displayBadge) && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-mono">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{displayBadge}</span>
+                </div>
+              )}
+              {Boolean(displayTitle) && (
+                <h2 className={`text-3xl sm:text-4xl font-extrabold tracking-tight ${isLight ? 'text-neutral-900' : 'text-white'}`}>
+                  {displayTitle}
+                </h2>
+              )}
+              {Boolean(displaySubtitle) && (
+                <p className={`text-sm sm:text-base leading-relaxed ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
+                  {displaySubtitle}
+                </p>
+              )}
             </div>
 
-            {/* Quick Metrics */}
-            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-neutral-800">
-              <div className="bg-neutral-900/40 border border-neutral-800/80 rounded-2xl p-4">
-                <p className="text-2xl sm:text-3xl font-extrabold text-white bg-gradient-to-r from-brand-orange to-brand-red bg-clip-text text-transparent">100%</p>
-                <p className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider mt-1">Soporte Headless</p>
-              </div>
-              <div className="bg-neutral-900/40 border border-neutral-800/80 rounded-2xl p-4">
-                <p className="text-2xl sm:text-3xl font-extrabold text-white bg-gradient-to-r from-brand-orange to-brand-red bg-clip-text text-transparent">&lt; 3 mins</p>
-                <p className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider mt-1">Carga en AWS Amplify</p>
-              </div>
+            {/* Direct Contact Cards */}
+            <div className="space-y-4 font-mono text-xs">
+              {Boolean(displayEmailValue) && (
+                <div className={`p-4 rounded-2xl border flex items-center gap-4 ${
+                  isLight ? 'bg-white border-neutral-200 shadow-sm' : 'bg-neutral-900/60 border-neutral-800'
+                }`}>
+                  <div className="p-2.5 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-brand-orange">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <div>
+                    {Boolean(displayEmailLabel) && (
+                      <span className={`block text-[10px] uppercase tracking-wider ${isLight ? 'text-neutral-500' : 'text-neutral-500'}`}>{displayEmailLabel}</span>
+                    )}
+                    <a href={`mailto:${displayEmailValue}`} className={`font-bold hover:text-brand-orange transition-colors ${isLight ? 'text-neutral-900' : 'text-white'}`}>
+                      {displayEmailValue}
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {Boolean(displayPhoneValue) && (
+                <div className={`p-4 rounded-2xl border flex items-center gap-4 ${
+                  isLight ? 'bg-white border-neutral-200 shadow-sm' : 'bg-neutral-900/60 border-neutral-800'
+                }`}>
+                  <div className="p-2.5 rounded-xl bg-brand-red/10 border border-brand-red/20 text-brand-red">
+                    <Phone className="w-4 h-4" />
+                  </div>
+                  <div>
+                    {Boolean(displayPhoneLabel) && (
+                      <span className={`block text-[10px] uppercase tracking-wider ${isLight ? 'text-neutral-500' : 'text-neutral-500'}`}>{displayPhoneLabel}</span>
+                    )}
+                    <a href={displayPhoneLink} target="_blank" rel="noreferrer" className={`font-bold hover:text-brand-orange transition-colors ${isLight ? 'text-neutral-900' : 'text-white'}`}>
+                      {displayPhoneValue}
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Conversion Ready Notification */}
-            <div className="p-4 rounded-2xl bg-neutral-900/30 border border-neutral-800 text-xs text-neutral-400 flex items-start gap-3">
-              <div className="p-1.5 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 mt-0.5">
-                <CheckCircle className="w-4 h-4" />
+            {/* Security Notice */}
+            {(Boolean(displaySecurityTitle) || Boolean(displaySecurityDesc)) && (
+              <div className={`p-4 rounded-2xl border text-[11px] font-mono leading-relaxed flex items-start gap-3 ${
+                isLight ? 'bg-neutral-100/80 border-neutral-200 text-neutral-600' : 'bg-neutral-950 border-neutral-900 text-neutral-400'
+              }`}>
+                <Lock className="w-4 h-4 text-brand-orange shrink-0 mt-0.5" />
+                <div>
+                  {Boolean(displaySecurityTitle) && <span className="text-brand-orange font-bold block mb-0.5">{displaySecurityTitle}</span>}
+                  {Boolean(displaySecurityDesc) && <span>{displaySecurityDesc}</span>}
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-neutral-200">Seguimiento de Conversiones Activo</p>
-                <p className="mt-0.5 text-neutral-400">Este formulario despacha eventos <code className="text-neutral-300">fbq('track', 'Lead')</code> y push al dataLayer de GTM de manera nativa para medir el ROI de tu inversión en marketing.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Panel: Interactive Form */}
-          <div className="lg:col-span-7 bg-neutral-900/50 border border-neutral-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
-            {status === 'success' ? (
-              <div className="py-12 text-center space-y-6">
-                <div className="inline-flex p-4 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">
-                  <CheckCircle className="w-12 h-12" />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-white">¡Mensaje recibido con éxito!</h3>
-                  <p className="text-neutral-400 text-sm max-w-md mx-auto leading-relaxed">
-                    Gracias por ponerte en contacto con Revenge. El equipo de consultoría analizará tu requerimiento y te contactará en menos de 24 horas hábiles.
-                  </p>
-                </div>
-
-                <div className="bg-neutral-950 border border-neutral-800 p-4 rounded-2xl text-left max-w-md mx-auto space-y-2">
-                  <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">Eventos de conversión simulados:</p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-[10px] font-mono font-bold text-amber-500">
-                      GTM: Lead
-                    </span>
-                    <span className="px-2.5 py-1 rounded bg-pink-500/10 border border-pink-500/20 text-[10px] font-mono font-bold text-pink-400">
-                      Meta Pixel: Lead
-                    </span>
-                  </div>
-                  <p className="text-[10px] font-mono text-neutral-400">Comprueba el <span className="text-brand-orange">Marketing Pixel Helper</span> flotante en la parte inferior derecha para ver los logs y el payload enviado.</p>
-                </div>
-
-                <button
-                  id="reset-form-btn"
-                  onClick={resetForm}
-                  className="inline-flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition-all cursor-pointer border border-neutral-700"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  <span>Enviar otra solicitud</span>
-                </button>
-              </div>
-            ) : (
-              <form id="lead-form" onSubmit={handleSubmit} className="space-y-6">
-                {/* Inputs Row 1: Name & Email */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>Nombre completo *</span>
-                    </label>
-                    <input
-                      id="form-name-input"
-                      type="text"
-                      value={formData.fullName}
-                      onChange={(e) => handleFieldChange('fullName', e.target.value)}
-                      className={`w-full bg-neutral-950 border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${
-                        errors.fullName ? 'border-red-500/60 focus:ring-red-500/20' : 'border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
-                      }`}
-                      placeholder="Ej. Baruch Bucay"
-                    />
-                    {errors.fullName && (
-                      <p className="text-[10px] text-red-400 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
-                        <span>{errors.fullName}</span>
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>Email corporativo *</span>
-                    </label>
-                    <input
-                      id="form-email-input"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleFieldChange('email', e.target.value)}
-                      className={`w-full bg-neutral-950 border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${
-                        errors.email ? 'border-red-500/60 focus:ring-red-500/20' : 'border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
-                      }`}
-                      placeholder="Ej. contacto@empresa.com"
-                    />
-                    {errors.email && (
-                      <p className="text-[10px] text-red-400 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
-                        <span>{errors.email}</span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Inputs Row 2: Phone & Company Name */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>Teléfono / WhatsApp</span>
-                    </label>
-                    <input
-                      id="form-phone-input"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => handleFieldChange('phone', e.target.value)}
-                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20 focus:ring-1 rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
-                      placeholder="Ej. +52 55 1234 5678"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>Nombre de tu Empresa *</span>
-                    </label>
-                    <input
-                      id="form-company-input"
-                      type="text"
-                      value={formData.company}
-                      onChange={(e) => handleFieldChange('company', e.target.value)}
-                      className={`w-full bg-neutral-950 border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 ${
-                        errors.company ? 'border-red-500/60 focus:ring-red-500/20' : 'border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
-                      }`}
-                      placeholder="Ej. Revenge Corp"
-                    />
-                    {errors.company && (
-                      <p className="text-[10px] text-red-400 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
-                        <span>{errors.company}</span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Dropdowns Row: Size & Service */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>Colaboradores</span>
-                    </label>
-                    <select
-                      id="form-company-size-select"
-                      value={formData.companySize}
-                      onChange={(e) => handleFieldChange('companySize', e.target.value)}
-                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20 focus:ring-1 rounded-xl px-4 py-3 text-sm text-white focus:outline-none appearance-none cursor-pointer"
-                    >
-                      <option value="1-10">1 a 10 personas</option>
-                      <option value="11-50">11 a 50 personas</option>
-                      <option value="51-200">51 a 200 personas</option>
-                      <option value="200+">Más de 200 personas</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>Servicio de Interés</span>
-                    </label>
-                    <select
-                      id="form-service-select"
-                      value={formData.service}
-                      onChange={(e) => handleFieldChange('service', e.target.value)}
-                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20 focus:ring-1 rounded-xl px-4 py-3 text-sm text-white focus:outline-none appearance-none cursor-pointer"
-                    >
-                      <option value="ecommerce_shopify">eCommerce Shopify Partner</option>
-                      <option value="ecommerce_tiendanube">eCommerce Tienda Nube Partner</option>
-                      <option value="headless_contento">Migración CMS Contento (Headless)</option>
-                      <option value="headless_contentful">Migración Contentful (Enterprise)</option>
-                      <option value="design_research">Diseño UX/UI & Research</option>
-                      <option value="integrations_dev">Desarrollo a Medida & Integraciones</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
-                      <DollarSign className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>Presupuesto</span>
-                    </label>
-                    <select
-                      id="form-budget-select"
-                      value={formData.budget}
-                      onChange={(e) => handleFieldChange('budget', e.target.value)}
-                      className="w-full bg-neutral-950 border border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20 focus:ring-1 rounded-xl px-4 py-3 text-sm text-white focus:outline-none appearance-none cursor-pointer"
-                    >
-                      <option value="5k-15k">5K a 15K USD</option>
-                      <option value="15k-50k">15K a 50K USD</option>
-                      <option value="50k+">Más de 50K USD</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Message TextArea */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-neutral-300">Detalles del Proyecto *</label>
-                  <textarea
-                    id="form-message-input"
-                    value={formData.message}
-                    onChange={(e) => handleFieldChange('message', e.target.value)}
-                    rows={4}
-                    className={`w-full bg-neutral-950 border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 resize-none ${
-                      errors.message ? 'border-red-500/60 focus:ring-red-500/20' : 'border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
-                    }`}
-                    placeholder="Cuéntanos sobre tus retos actuales, integraciones requeridas y tiempos estimados..."
-                  />
-                  {errors.message && (
-                    <p className="text-[10px] text-red-400 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{errors.message}</span>
-                    </p>
-                  )}
-                </div>
-
-                {/* Submit button */}
-                <button
-                  id="submit-contact-form-btn"
-                  type="submit"
-                  disabled={status === 'submitting'}
-                  className="w-full bg-gradient-to-r from-brand-orange to-brand-red text-white font-bold text-xs uppercase tracking-wider py-4 rounded-xl transition-all hover:shadow-[0_0_25px_rgba(255,94,58,0.3)] disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  {status === 'submitting' ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Procesando Lead...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      <span>Enviar Solicitud a Revenge</span>
-                    </>
-                  )}
-                </button>
-              </form>
             )}
           </div>
+
+          {/* Right Column: Bigin Official Web-to-Lead Form Styled */}
+          <div className="lg:col-span-7">
+            <div className={`rounded-3xl p-6 sm:p-8 border transition-all relative overflow-hidden ${
+              isLight ? 'bg-white border-neutral-200 shadow-xl' : 'bg-neutral-900/60 border-neutral-800/90 shadow-2xl backdrop-blur-xl'
+            }`}>
+              
+              <iframe
+                id="hidden7482990000000634003Frame"
+                name="hidden7482990000000634003Frame"
+                style={{ display: 'none' }}
+                className="w-full h-full border-none"
+              />
+
+              {submitted && (
+                <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-mono flex items-center justify-between">
+                  <span>✓ ¡Solicitud enviada! Nos pondremos en contacto a la brevedad.</span>
+                  <button onClick={() => setSubmitted(false)} className="text-xs text-white underline ml-4">
+                    Enviar otro
+                  </button>
+                </div>
+              )}
+
+              <form
+                id="BiginWebToRecordForm7482990000000634003"
+                name="BiginWebToRecordForm7482990000000634003"
+                action="https://bigin.zoho.com/crm/WebToContactForm"
+                method="POST"
+                target="hidden7482990000000634003Frame"
+                acceptCharset="UTF-8"
+                onSubmit={() => {
+                  setSubmitted(true);
+                  onTrackEvent({
+                    platform: 'Both',
+                    eventName: 'Lead',
+                    data: {
+                      form_name: 'bigin_contact_form',
+                      lead_source: 'sitio_oficial_revenge'
+                    }
+                  });
+                }}
+                className="space-y-5"
+              >
+                {/* Hidden Fields for Bigin CRM */}
+                <input type="hidden" name="xnQsjsdp" value={biginXnQsjsdp} />
+                <input type="hidden" name="zc_gad" id="zc_gad" value="" />
+                <input type="hidden" name="xmIwtLD" value={biginXmIwtLD} />
+                <input type="hidden" name="actionType" value="Q29udGFjdHM=" />
+                <input type="hidden" name="rmsg" id="rmsg" value="true" />
+                <input type="hidden" name="returnURL" value="null" />
+
+                {/* Form Inputs Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  
+                  {/* Nombre */}
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                      Nombre
+                    </label>
+                    <input
+                      name="First Name"
+                      maxLength={40}
+                      type="text"
+                      placeholder="Ej. Fulanito"
+                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                        isLight
+                          ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                          : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                      }`}
+                    />
+                  </div>
+
+                  {/* Apellidos (Mandatorio en Bigin) */}
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                      Apellidos <span className="text-brand-orange">*</span>
+                    </label>
+                    <input
+                      name="Last Name"
+                      maxLength={80}
+                      type="text"
+                      required
+                      placeholder="Ej. Rodríguez"
+                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                        isLight
+                          ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                          : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                      }`}
+                    />
+                  </div>
+
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  
+                  {/* Correo Electrónico */}
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                      Correo electrónico
+                    </label>
+                    <input
+                      name="Email"
+                      maxLength={100}
+                      type="email"
+                      placeholder="contacto@empresa.com"
+                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                        isLight
+                          ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                          : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                      }`}
+                    />
+                  </div>
+
+                  {/* Teléfono */}
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                      Teléfono
+                    </label>
+                    <input
+                      name="Phone"
+                      maxLength={50}
+                      type="tel"
+                      placeholder="+52 55 1234 5678"
+                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                        isLight
+                          ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                          : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                      }`}
+                    />
+                  </div>
+
+                </div>
+
+                {/* Descripción / Requerimiento */}
+                <div className="space-y-1.5">
+                  <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                    Descripción de tu Proyecto / Requerimiento
+                  </label>
+                  <textarea
+                    name="Description"
+                    maxLength={32000}
+                    rows={4}
+                    placeholder="Platícanos sobre tus objetivos, ecosistema actual o necesidades tecnológicas..."
+                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors resize-y ${
+                      isLight
+                        ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                        : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                    }`}
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-2">
+                  <button
+                    id="formsubmit"
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-brand-orange to-brand-red hover:shadow-[0_0_30px_rgba(255,94,58,0.4)] text-white text-xs font-extrabold uppercase tracking-wider py-4 rounded-xl transition-all cursor-pointer shadow-lg border-none flex items-center justify-center gap-2"
+                  >
+                    <span>{displaySubmitText}</span>
+                  </button>
+                </div>
+
+                {/* Powered By Zoho Bigin footer */}
+                <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                  <span>Con tecnología de <strong className={isLight ? 'text-neutral-800' : 'text-neutral-300'}>Bigin by Zoho</strong></span>
+                  <a
+                    href="https://www.zoho.com/report-abuse"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-neutral-500 hover:text-brand-orange underline text-[10px]"
+                  >
+                    Notificar abuso
+                  </a>
+                </div>
+
+              </form>
+
+            </div>
+          </div>
+
         </div>
+
       </div>
     </section>
   );

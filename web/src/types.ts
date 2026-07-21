@@ -7,7 +7,9 @@ export interface MarketingEvent {
 }
 
 export interface Service {
-  _id: string;
+  _id?: string;
+  _key?: string;
+  id?: string;
   title: string;
   description: string;
   icon: string;
@@ -15,16 +17,21 @@ export interface Service {
 }
 
 export interface Partner {
-  _id: string;
+  _id?: string;
+  _key?: string;
+  id?: string;
   name: string;
   role: string;
   description: string;
-  logoType: 'shopify' | 'tiendanube' | 'contentful' | 'contento';
+  logoType?: 'shopify' | 'tiendanube' | 'contentful' | 'contento' | 'generic' | string;
+  logoImage?: { asset?: { _id?: string; url?: string } };
   accentColor?: string;
 }
 
 export interface ClientCase {
-  _id: string;
+  _id?: string;
+  _key?: string;
+  id?: string;
   name: string;
   industry: string;
   metric: string;
@@ -56,6 +63,7 @@ export interface SiteSettings {
     href?: string;
     linkType?: 'internal' | 'external';
   }[];
+  showThemeToggleInHeader?: boolean;
   footerDescription: string;
   complianceText: string;
 }
@@ -88,12 +96,19 @@ export type PageBlock =
   | {
       _type: 'partnersBlock';
       _key: string;
+      badgeText?: string;
       title: string;
+      subtitle?: string;
       partners: Partner[];
+      integrationCalloutTitle?: string;
+      integrationCalloutDescription?: string;
+      integrationCalloutButtonLabel?: string;
+      integrationCalloutButtonLink?: string;
     }
   | {
       _type: 'servicesBlock';
       _key: string;
+      badgeText?: string;
       title: string;
       description: string;
       services: Service[];
@@ -108,8 +123,20 @@ export type PageBlock =
   | {
       _type: 'contactBlock';
       _key: string;
-      title: string;
-      subtitle: string;
+      badgeText?: string;
+      title?: string;
+      subtitle?: string;
+      emailLabel?: string;
+      emailValue?: string;
+      phoneLabel?: string;
+      phoneValue?: string;
+      phoneLink?: string;
+      securityTitle?: string;
+      securityDescription?: string;
+      xnQsjsdp?: string;
+      xmIwtLD?: string;
+      submitButtonText?: string;
+      gtmEventName?: string;
     }
   | {
       _type: 'textContentBlock';

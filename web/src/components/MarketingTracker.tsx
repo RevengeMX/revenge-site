@@ -368,8 +368,6 @@ export const trackEvent = (eventName: string, params?: Record<string, any>) => {
 
           {/* Footer console */}
           <div className="px-4 py-2 border-t border-neutral-800 bg-neutral-950 flex items-center justify-between text-[10px] text-neutral-500 font-mono">
-            <span>Status: Ready to deploy</span>
-            <span>GTM-XXXXXXX</span>
           </div>
         </div>
       )}

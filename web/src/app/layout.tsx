@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
+import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { SanityLive, sanityFetch } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { draftMode } from "next/headers";
 import { defineQuery } from "next-sanity";
+import { GTM_ID, GA4_ID } from "@/lib/gtm";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +45,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const isDraftMode = (await draftMode()).isEnabled;
+  const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID || "";
 
   return (
     <html
@@ -50,9 +54,30 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {children}
-        <SanityLive />
-        {isDraftMode && <VisualEditing />}
+        {isDraftMode && (
+          <>
+            <SanityLive />
+            <VisualEditing />
+          </>
+        )}
       </body>
+      <GoogleTagManager gtmId={GTM_ID} />
+      <GoogleAnalytics gaId={GA4_ID} />
+      {clarityId && (
+        <Script
+          id="microsoft-clarity-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "${clarityId}");
+            `,
+          }}
+        />
+      )}
     </html>
   );
 }
