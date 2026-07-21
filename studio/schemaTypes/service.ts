@@ -19,14 +19,23 @@ export const service = defineType({
       name: 'icon',
       title: 'Icon',
       type: 'string',
+      description: 'Icono a mostrar en la tarjeta de servicio (Lucide Icons)',
       options: {
         list: [
-          { title: 'Shopping Bag', value: 'ShoppingBag' },
-          { title: 'Layers', value: 'Layers' },
-          { title: 'Palette', value: 'Palette' },
-          { title: 'Search', value: 'Search' },
-          { title: 'Code', value: 'Code2' },
-          { title: 'CPU', value: 'Cpu' },
+          { title: 'Shopping Bag 🛍️ (eCommerce)', value: 'ShoppingBag' },
+          { title: 'Layers 🥞 (Headless/Modular)', value: 'Layers' },
+          { title: 'Palette 🎨 (UX/UI Design)', value: 'Palette' },
+          { title: 'Search 🔍 (SEO/Analytics)', value: 'Search' },
+          { title: 'Code 💻 (Desarrollo)', value: 'Code2' },
+          { title: 'CPU ⚡ (Rendimiento)', value: 'Cpu' },
+          { title: 'Zap ⚡ (Velocidad / ISR)', value: 'Zap' },
+          { title: 'Rocket 🚀 (Escalabilidad)', value: 'Rocket' },
+          { title: 'Shield 🛡️ (Ciberseguridad)', value: 'ShieldCheck' },
+          { title: 'Database 🗄️ (Backend / Cloud)', value: 'Database' },
+          { title: 'Smartphone 📱 (Apps Móviles)', value: 'Smartphone' },
+          { title: 'Globe 🌐 (Internacionalización)', value: 'Globe' },
+          { title: 'Workflow 🔄 (Automatización)', value: 'Workflow' },
+          { title: 'BarChart 📈 (Growth / Métricas)', value: 'BarChart3' },
         ],
       },
     }),
@@ -42,4 +51,16 @@ export const service = defineType({
       type: 'number',
     }),
   ],
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'icon',
+    },
+    prepare({ title, subtitle }) {
+      return {
+        title: title || 'Untitled Service',
+        subtitle: subtitle ? `Icon: ${subtitle}` : 'No icon selected',
+      }
+    },
+  },
 })

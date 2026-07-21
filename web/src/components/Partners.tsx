@@ -3,13 +3,30 @@ import { Handshake, ShoppingBag, Globe, Database, ExternalLink, ArrowRight } fro
 import { Partner, MarketingEvent } from '../types';
 
 interface PartnersProps {
-  title: string;
+  badgeText?: string;
+  title?: string;
+  subtitle?: string;
   partners: Partner[];
+  integrationCalloutTitle?: string;
+  integrationCalloutDescription?: string;
+  integrationCalloutButtonLabel?: string;
+  integrationCalloutButtonLink?: string;
   theme?: 'dark' | 'light';
   onTrackEvent: (event: Omit<MarketingEvent, 'id' | 'timestamp'>) => void;
 }
 
-export default function Partners({ title, partners, theme = 'dark', onTrackEvent }: PartnersProps) {
+export default function Partners({
+  badgeText,
+  title,
+  subtitle,
+  partners,
+  integrationCalloutTitle,
+  integrationCalloutDescription,
+  integrationCalloutButtonLabel,
+  integrationCalloutButtonLink,
+  theme = 'dark',
+  onTrackEvent
+}: PartnersProps) {
   const isLight = theme === 'light';
 
   const handlePartnerClick = (partnerName: string) => {
@@ -34,17 +51,23 @@ export default function Partners({ title, partners, theme = 'dark', onTrackEvent
         {/* Title Block */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-mono mb-3">
-              <Handshake className="w-3.5 h-3.5" />
-              <span>Sinergia Tecnológica</span>
-            </div>
-            <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isLight ? 'text-neutral-900' : 'text-white'}`}>
-              {title || 'Nuestros Partners Oficiales'}
-            </h2>
+            {badgeText && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-mono mb-3">
+                <Handshake className="w-3.5 h-3.5" />
+                <span>{badgeText}</span>
+              </div>
+            )}
+            {title && (
+              <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isLight ? 'text-neutral-900' : 'text-white'}`}>
+                {title}
+              </h2>
+            )}
           </div>
-          <p className={`text-xs sm:text-sm max-w-md font-mono ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>
-            * Alianzas directas con los líderes de la industria para asegurar soporte de primer nivel e implementaciones robustas.
-          </p>
+          {subtitle && (
+            <p className={`text-xs sm:text-sm max-w-md font-mono ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>
+              {subtitle}
+            </p>
+          )}
         </div>
 
         {/* Partners Grid */}
@@ -74,29 +97,33 @@ export default function Partners({ title, partners, theme = 'dark', onTrackEvent
                 <div className="space-y-4">
                   {/* Logo/Icon Header representation */}
                   <div className="flex items-center justify-between">
-                    {partner.logoType === 'contento' && (
+                    {partner.logoImage?.asset?.url ? (
+                      <div className="h-10 px-2.5 rounded-xl bg-neutral-900/40 border border-neutral-800 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={partner.logoImage.asset.url} 
+                          alt={partner.name || 'Partner Logo'} 
+                          className="max-h-6 max-w-[80px] object-contain"
+                        />
+                      </div>
+                    ) : partner.logoType === 'contento' ? (
                       <div className="h-10 w-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center font-bold font-mono">
                         C
                       </div>
-                    )}
-                    {partner.logoType === 'shopify' && (
+                    ) : partner.logoType === 'shopify' ? (
                       <div className="h-10 w-10 rounded-xl bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center">
                         <ShoppingBag className="w-5 h-5" />
                       </div>
-                    )}
-                    {partner.logoType === 'tiendanube' && (
+                    ) : partner.logoType === 'tiendanube' ? (
                       <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-500 flex items-center justify-center">
                         <Globe className="w-5 h-5" />
                       </div>
-                    )}
-                    {partner.logoType === 'contentful' && (
+                    ) : partner.logoType === 'contentful' ? (
                       <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 flex items-center justify-center">
                         <Database className="w-5 h-5" />
                       </div>
-                    )}
-                    {!['contento', 'shopify', 'tiendanube', 'contentful'].includes(partner.logoType) && (
+                    ) : (
                       <div className="h-10 w-10 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-brand-orange flex items-center justify-center font-bold font-mono">
-                        {partner.name.charAt(0)}
+                        {partner.name ? partner.name.charAt(0) : 'P'}
                       </div>
                     )}
 
@@ -138,22 +165,34 @@ export default function Partners({ title, partners, theme = 'dark', onTrackEvent
         </div>
 
         {/* Integration Callout */}
-        <div className={`mt-8 border rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${
-          isLight ? 'bg-neutral-100/70 border-neutral-200' : 'bg-neutral-950/40 border-neutral-800'
-        }`}>
-          <div className="text-xs">
-            <span className={`font-bold block ${isLight ? 'text-neutral-900' : 'text-neutral-300'}`}>¿Usas otro ecosistema tecnológico?</span>
-            <span className={isLight ? 'text-neutral-600' : 'text-neutral-400'}>Integramos ERPs locales, SAP, pasarelas de pago (Stripe, Mercado Pago) y sistemas CRM de forma segura.</span>
+        {(integrationCalloutTitle || integrationCalloutDescription || integrationCalloutButtonLabel) && (
+          <div className={`mt-8 border rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${
+            isLight ? 'bg-neutral-100/70 border-neutral-200' : 'bg-neutral-950/40 border-neutral-800'
+          }`}>
+            <div className="text-xs space-y-0.5">
+              {integrationCalloutTitle && (
+                <span className={`font-bold block ${isLight ? 'text-neutral-900' : 'text-neutral-300'}`}>
+                  {integrationCalloutTitle}
+                </span>
+              )}
+              {integrationCalloutDescription && (
+                <span className={isLight ? 'text-neutral-600' : 'text-neutral-400'}>
+                  {integrationCalloutDescription}
+                </span>
+              )}
+            </div>
+            {integrationCalloutButtonLabel && (
+              <a
+                id="consultancy-direct-btn"
+                href={integrationCalloutButtonLink || '#contact-section'}
+                className="text-xs font-bold text-brand-orange hover:text-white transition-colors font-mono uppercase tracking-wider flex items-center gap-1 shrink-0"
+              >
+                <span>{integrationCalloutButtonLabel}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
+            )}
           </div>
-          <a
-            id="consultancy-direct-btn"
-            href="#contact-section"
-            className="text-xs font-bold text-brand-orange hover:text-white transition-colors font-mono uppercase tracking-wider flex items-center gap-1 shrink-0"
-          >
-            <span>Consultar integraciones</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </a>
-        </div>
+        )}
 
       </div>
     </section>

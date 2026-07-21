@@ -7,41 +7,65 @@ export const partner = defineType({
   fields: [
     defineField({
       name: 'name',
-      title: 'Name',
+      title: 'Nombre del Partner',
       type: 'string',
     }),
     defineField({
       name: 'role',
-      title: 'Role',
+      title: 'Rol / Categoría (ej: E-commerce Partner)',
       type: 'string',
     }),
     defineField({
       name: 'description',
-      title: 'Description',
+      title: 'Descripción',
       type: 'text',
     }),
     defineField({
+      name: 'logoImage',
+      title: 'Imagen del Logo (Subir archivo)',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      description: 'Imagen/Logo personalizado de la empresa partner. Si se sube una imagen, tendrá prioridad sobre los iconos predeterminados.',
+    }),
+    defineField({
       name: 'logoType',
-      title: 'Logo Type',
+      title: 'Icono Predeterminado (Fallback si no hay imagen)',
       type: 'string',
       options: {
         list: [
-          { title: 'Contento', value: 'contento' },
-          { title: 'Shopify', value: 'shopify' },
-          { title: 'Tienda Nube', value: 'tiendanube' },
-          { title: 'Contentful', value: 'contentful' },
+          { title: 'Shopify (Icono)', value: 'shopify' },
+          { title: 'Tienda Nube (Icono)', value: 'tiendanube' },
+          { title: 'Contentful (Icono)', value: 'contentful' },
+          { title: 'Contento (Icono)', value: 'contento' },
+          { title: 'Genérico / Inicial', value: 'generic' },
         ],
       },
     }),
     defineField({
       name: 'accentColor',
-      title: 'Accent Class/Styles description',
+      title: 'Color o Borde de Acento (Opcional)',
       type: 'string',
     }),
     defineField({
       name: 'order',
-      title: 'Order',
+      title: 'Orden de aparición',
       type: 'number',
     }),
   ],
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'role',
+      media: 'logoImage',
+    },
+    prepare({ title, subtitle, media }) {
+      return {
+        title: title || 'Untitled Partner',
+        subtitle: subtitle || '',
+        media: media,
+      }
+    },
+  },
 })

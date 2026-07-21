@@ -152,8 +152,14 @@ export default function RevengeSiteClient({
               <Partners
                 key={block._key}
                 theme={theme}
+                badgeText={block.badgeText}
                 title={block.title}
+                subtitle={block.subtitle}
                 partners={block.partners || []}
+                integrationCalloutTitle={block.integrationCalloutTitle}
+                integrationCalloutDescription={block.integrationCalloutDescription}
+                integrationCalloutButtonLabel={block.integrationCalloutButtonLabel}
+                integrationCalloutButtonLink={block.integrationCalloutButtonLink}
                 onTrackEvent={addTrackEvent}
               />
             );
@@ -183,8 +189,19 @@ export default function RevengeSiteClient({
               <ContactForm
                 key={block._key}
                 theme={theme}
+                badgeText={block.badgeText}
                 title={block.title}
                 subtitle={block.subtitle}
+                emailLabel={block.emailLabel}
+                emailValue={block.emailValue}
+                phoneLabel={block.phoneLabel}
+                phoneValue={block.phoneValue}
+                phoneLink={block.phoneLink}
+                securityTitle={block.securityTitle}
+                securityDescription={block.securityDescription}
+                xnQsjsdp={block.xnQsjsdp}
+                xmIwtLD={block.xmIwtLD}
+                submitButtonText={block.submitButtonText}
                 gtmEventName={block.gtmEventName}
                 onTrackEvent={addTrackEvent}
               />

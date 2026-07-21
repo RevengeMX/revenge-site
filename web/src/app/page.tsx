@@ -30,7 +30,10 @@ const PAGE_DATA_QUERY = defineQuery(`{
       ...,
       _type == "partnersBlock" => {
         ...,
-        partners[]->
+        partners[]->{
+          ...,
+          logoImage{ asset->{ _id, url } }
+        }
       },
       _type == "servicesBlock" => {
         ...,
