@@ -4,6 +4,7 @@ import { urlFor } from '../sanity/lib/image';
 interface LogoProps {
   className?: string;
   variant?: 'full' | 'icon';
+  theme?: 'dark' | 'light';
   logoLight?: any;
   logoDark?: any;
   logoIcon?: any;
@@ -15,6 +16,7 @@ interface LogoProps {
 export default function Logo({
   className = '',
   variant = 'full',
+  theme = 'dark',
   logoLight,
   logoDark,
   logoIcon,
@@ -22,6 +24,8 @@ export default function Logo({
   logoHeightDesktop,
   logoHeightMobile,
 }: LogoProps) {
+  const isLight = theme === 'light';
+
   const styles = {
     '--height-desktop': logoHeightDesktop ? `${logoHeightDesktop}px` : (variant === 'icon' ? '32px' : '28px'),
     '--height-mobile': logoHeightMobile ? `${logoHeightMobile}px` : (variant === 'icon' ? '32px' : '24px'),
@@ -50,14 +54,19 @@ export default function Logo({
     );
   }
 
+  // Determine active logo asset for Light Mode / Dark Mode
+  const activeLogoAsset = isLight ? (logoDark || logoLight) : logoLight;
+
   return (
     <div className={`relative flex items-center ${className}`}>
-      {logoLight ? (
+      {activeLogoAsset ? (
         <img
-          src={urlFor(logoLight).width(250).url()}
+          src={urlFor(activeLogoAsset).width(250).url()}
           alt={logoText}
           style={styles}
-          className="h-[var(--height-mobile)] md:h-[var(--height-desktop)] w-auto object-contain select-none block"
+          className={`h-[var(--height-mobile)] md:h-[var(--height-desktop)] w-auto object-contain select-none block transition-all ${
+            isLight && !logoDark ? 'invert' : ''
+          }`}
           referrerPolicy="no-referrer"
         />
       ) : (
@@ -65,7 +74,7 @@ export default function Logo({
           <div className="h-7 w-7 rounded-lg bg-gradient-to-tr from-brand-red to-brand-orange flex items-center justify-center font-bold text-white text-sm">
             R
           </div>
-          <span className="font-extrabold text-white text-lg tracking-wider font-sans">
+          <span className={`font-extrabold text-lg tracking-wider font-sans ${isLight ? 'text-neutral-900' : 'text-white'}`}>
             {logoText}
           </span>
         </div>

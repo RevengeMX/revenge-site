@@ -56,6 +56,7 @@ export interface SiteSettings {
     href?: string;
     linkType?: 'internal' | 'external';
   }[];
+  showThemeToggleInHeader?: boolean;
   footerDescription: string;
   complianceText: string;
 }
@@ -94,6 +95,7 @@ export type PageBlock =
   | {
       _type: 'servicesBlock';
       _key: string;
+      badgeText?: string;
       title: string;
       description: string;
       services: Service[];

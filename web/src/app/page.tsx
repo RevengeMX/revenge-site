@@ -3,6 +3,8 @@ import { defineQuery } from "next-sanity";
 import RevengeSiteClient from "@/components/RevengeSiteClient";
 import { SiteSettings, PageBlock } from "@/types";
 
+export const revalidate = 60;
+
 const PAGE_DATA_QUERY = defineQuery(`{
   "siteSettings": *[_type == "siteSettings"][0]{
     logoText,
@@ -15,6 +17,7 @@ const PAGE_DATA_QUERY = defineQuery(`{
     navItems,
     footerNavItems,
     headerCta,
+    showThemeToggleInHeader,
     footerDescription,
     complianceText
   },

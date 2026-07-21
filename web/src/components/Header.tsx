@@ -1,11 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Menu, X, ArrowUpRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Sun, Moon } from 'lucide-react';
 import Logo from './Logo';
 import { MarketingEvent } from '../types';
 
 interface HeaderProps {
+  theme?: 'dark' | 'light';
+  toggleTheme?: () => void;
+  showThemeToggleInHeader?: boolean;
   logoLight?: any;
   logoDark?: any;
   logoIcon?: any;
@@ -20,6 +23,9 @@ interface HeaderProps {
 }
 
 export default function Header({
+  theme = 'dark',
+  toggleTheme,
+  showThemeToggleInHeader = true,
   logoLight,
   logoDark,
   logoIcon,
@@ -40,7 +46,8 @@ export default function Header({
     { label: 'Clientes', href: '#clientes-section' },
   ];
 
-
+  const ctaLabel = headerCtaText || 'Contáctanos';
+  const isDark = theme === 'dark';
 
   const handleNavClick = (label: string, href: string) => {
     setMobileMenuOpen(false);
@@ -55,118 +62,196 @@ export default function Header({
   };
 
   const handleCtaClick = () => {
+    setMobileMenuOpen(false);
     onTrackEvent({
       platform: 'Both',
       eventName: 'header_cta_click',
       data: {
-        button_name: 'header_cotizar_proyecto'
+        cta_text: ctaLabel,
+        cta_target: headerCtaLink || '#contact-section'
       }
     });
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-neutral-950/85 backdrop-blur border-b border-neutral-900/60 transition-all">
+    <header className={`sticky top-0 z-50 backdrop-blur-md border-b transition-colors duration-300 ${
+      isDark ? 'bg-neutral-950/80 border-neutral-900 text-neutral-200' : 'bg-white/80 border-neutral-200 text-neutral-800'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <a
-            id="brand-logo-link"
-            href="/"
-            onClick={() => handleNavClick('Home Logo', '/')}
-            className="flex items-center gap-2 focus:outline-none"
-          >
-            <Logo
-              variant="full"
-              logoLight={logoLight}
-              logoDark={logoDark}
-              logoText={logoText}
-              logoHeightDesktop={logoHeightDesktop}
-              logoHeightMobile={logoHeightMobile}
-            />
-          </a>
+          
+          {/* Left Side Group: Logo + Left Aligned Nav Links */}
+          <div className="flex items-center gap-10">
+            <a
+              id="brand-logo-link"
+              href="#root"
+              onClick={() => handleNavClick('Home Logo', '#root')}
+              className="flex items-center gap-2 focus:outline-none"
+            >
+              <Logo
+                variant="full"
+                theme={theme}
+                logoLight={logoLight}
+                logoDark={logoDark}
+                logoText={logoText}
+                logoHeightDesktop={logoHeightDesktop}
+                logoHeightMobile={logoHeightMobile}
+              />
+            </a>
 
-          <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-7">
+              {resolvedNavItems.map((item, idx) => {
+                const label = item?.label || '';
+                const href = item?.href || '';
+                if (!label) return null;
+                return (
+                  <a
+                    id={`desktop-nav-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
+                    key={idx}
+                    href={href}
+                    onClick={() => handleNavClick(label, href)}
+                    className={`text-[13px] font-semibold transition-colors tracking-wide ${
+                      isDark ? 'text-neutral-400 hover:text-white' : 'text-neutral-600 hover:text-neutral-900'
+                    }`}
+                  >
+                    {label}
+                  </a>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Desktop CTA & Theme Toggle Button on Right */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle Button (Sol/Luna) - Configurable from Sanity CMS */}
+            {showThemeToggleInHeader && toggleTheme && (
+              <button
+                id="desktop-header-theme-toggle"
+                onClick={toggleTheme}
+                title={isDark ? 'Cambiar a Modo Claro (Sol)' : 'Cambiar a Modo Oscuro (Luna)'}
+                className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center shadow-sm ${
+                  isDark 
+                    ? 'bg-neutral-900 border-neutral-800 text-amber-400 hover:bg-neutral-800 hover:border-neutral-700' 
+                    : 'bg-neutral-100 border-neutral-300 text-indigo-600 hover:bg-neutral-200'
+                }`}
+              >
+                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            )}
+
+            <a
+              id="desktop-header-cta-btn"
+              href={headerCtaLink || '#contact-section'}
+              target={headerCtaType === 'external' ? '_blank' : undefined}
+              rel={headerCtaType === 'external' ? 'noopener noreferrer' : undefined}
+              onClick={handleCtaClick}
+              className={`inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider px-6 py-3 rounded-xl transition-all cursor-pointer border shadow-sm ${
+                isDark 
+                  ? 'bg-white text-neutral-950 border-white hover:bg-neutral-100 hover:shadow-[0_4px_25px_rgba(255,94,58,0.45)]' 
+                  : 'bg-neutral-900 text-white border-neutral-900 hover:bg-neutral-800 hover:shadow-[0_4px_25px_rgba(255,94,58,0.45)]'
+              }`}
+            >
+              <span>{ctaLabel}</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="flex items-center gap-2 md:hidden">
+            {showThemeToggleInHeader && toggleTheme && (
+              <button
+                id="mobile-header-theme-toggle-quick"
+                onClick={toggleTheme}
+                className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
+                  isDark 
+                    ? 'bg-neutral-900 border-neutral-800 text-amber-400' 
+                    : 'bg-neutral-100 border-neutral-300 text-indigo-600'
+                }`}
+              >
+                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            )}
+
+            <button
+              id="mobile-menu-toggle-btn"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`p-2 rounded-xl transition-colors cursor-pointer ${
+                isDark ? 'text-neutral-400 hover:text-white hover:bg-neutral-900' : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
+              }`}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Mobile Menu Drawer */}
+      {mobileMenuOpen && (
+        <div className={`md:hidden border-b px-4 pt-3 pb-6 space-y-4 font-mono text-xs transition-colors duration-300 ${
+          isDark ? 'bg-neutral-950 border-neutral-900' : 'bg-white border-neutral-200'
+        }`}>
+          <div className="flex flex-col space-y-3 pt-2">
             {resolvedNavItems.map((item, idx) => {
               const label = item?.label || '';
               const href = item?.href || '';
               if (!label) return null;
               return (
                 <a
-                  id={`desktop-nav-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
+                  id={`mobile-nav-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
                   key={idx}
                   href={href}
                   onClick={() => handleNavClick(label, href)}
-                  className="text-[13px] font-semibold text-neutral-400 hover:text-white transition-colors tracking-wide"
+                  className={`py-2 text-sm font-semibold transition-colors border-b ${
+                    isDark ? 'text-neutral-300 hover:text-white border-neutral-900' : 'text-neutral-700 hover:text-neutral-900 border-neutral-100'
+                  }`}
                 >
                   {label}
                 </a>
               );
             })}
-          </nav>
-
-          {headerCtaText && (
-            <div className="hidden md:flex items-center gap-4">
-              <a
-                id="desktop-header-cta-btn"
-                href={headerCtaLink || '#contact-section'}
-                target={headerCtaType === 'external' ? '_blank' : undefined}
-                rel={headerCtaType === 'external' ? 'noopener noreferrer' : undefined}
-                onClick={handleCtaClick}
-                className="inline-flex items-center gap-1 bg-gradient-to-r from-brand-orange to-brand-red text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-xl hover:shadow-[0_0_20px_rgba(255,94,58,0.25)] transition-all cursor-pointer"
-              >
-                <span>{headerCtaText}</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          )}
-
-          <div className="flex md:hidden">
-            <button
-              id="mobile-menu-toggle-btn"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors cursor-pointer"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
-        </div>
-      </div>
 
-      {mobileMenuOpen && (
-        <div className="md:hidden border-b border-neutral-900 bg-neutral-950 px-4 pt-2 pb-6 space-y-3 shadow-xl">
-          {resolvedNavItems.map((item, idx) => {
-            const label = item?.label || '';
-            const href = item?.href || '';
-            if (!label) return null;
-            return (
-              <a
-                id={`mobile-nav-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
-                key={idx}
-                href={href}
-                onClick={() => handleNavClick(label, href)}
-                className="block px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-white hover:bg-neutral-900 rounded-xl transition-all"
+          {/* Theme switcher option inside mobile drawer if enabled */}
+          {showThemeToggleInHeader && toggleTheme && (
+            <div className="pt-2 pb-1 border-t border-neutral-800 flex items-center justify-between">
+              <span className={`text-xs font-semibold ${isDark ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                Modo de Pantalla:
+              </span>
+              <button
+                onClick={toggleTheme}
+                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
+                  isDark 
+                    ? 'bg-neutral-900 border-neutral-800 text-neutral-200 hover:text-white' 
+                    : 'bg-neutral-100 border-neutral-300 text-neutral-800 hover:bg-neutral-200'
+                }`}
               >
-                {label}
-              </a>
-            );
-          })}
-          {headerCtaText && (
-            <div className="pt-2">
-              <a
-                id="mobile-header-cta-btn"
-                href={headerCtaLink || '#contact-section'}
-                target={headerCtaType === 'external' ? '_blank' : undefined}
-                rel={headerCtaType === 'external' ? 'noopener noreferrer' : undefined}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  handleCtaClick();
-                }}
-                className="w-full inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-brand-orange to-brand-red text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl transition-all cursor-pointer"
-              >
-                <span>{headerCtaText}</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </a>
+                {isDark ? (
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                ) : (
+                  <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                )}
+              </button>
             </div>
           )}
+
+          <div className="pt-2">
+            <a
+              id="mobile-header-cta-btn"
+              href={headerCtaLink || '#contact-section'}
+              target={headerCtaType === 'external' ? '_blank' : undefined}
+              rel={headerCtaType === 'external' ? 'noopener noreferrer' : undefined}
+              onClick={handleCtaClick}
+              className={`w-full inline-flex items-center justify-center gap-2 text-xs font-extrabold uppercase tracking-wider py-3.5 rounded-xl transition-all border shadow-sm ${
+                isDark 
+                  ? 'bg-white text-neutral-950 border-white hover:bg-neutral-100 hover:shadow-[0_4px_25px_rgba(255,94,58,0.45)]' 
+                  : 'bg-neutral-900 text-white border-neutral-900 hover:bg-neutral-800 hover:shadow-[0_4px_25px_rgba(255,94,58,0.45)]'
+              }`}
+            >
+              <span>{ctaLabel}</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       )}
     </header>
