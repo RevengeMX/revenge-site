@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Sparkles, Mail, Phone, Lock } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Sparkles, Mail, Phone, Lock, AlertCircle, CheckCircle } from 'lucide-react';
 import { MarketingEvent } from '../types';
 
 interface ContactFormProps {
@@ -15,13 +15,13 @@ interface ContactFormProps {
   phoneLink?: string;
   securityTitle?: string;
   securityDescription?: string;
-  xnQsjsdp?: string;
-  xmIwtLD?: string;
   submitButtonText?: string;
   gtmEventName?: string;
   theme?: 'dark' | 'light';
   onTrackEvent: (event: Omit<MarketingEvent, 'id' | 'timestamp'>) => void;
 }
+
+type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
 
 export default function ContactForm({
   badgeText,
@@ -34,42 +34,124 @@ export default function ContactForm({
   phoneLink,
   securityTitle,
   securityDescription,
-  xnQsjsdp,
-  xmIwtLD,
   submitButtonText,
   theme = 'dark',
   onTrackEvent
 }: ContactFormProps) {
   const isLight = theme === 'light';
-  const [submitted, setSubmitted] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [status, setStatus] = useState<SubmitState>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // If Sanity supplies empty string or null, fallback or conditionally hide
   const displayBadge = badgeText !== undefined ? badgeText : 'Hablemos de tu Proyecto';
   const displayTitle = title !== undefined ? title : 'Transformemos tu Presencia Digital';
   const displaySubtitle = subtitle !== undefined ? subtitle : 'Completa la información y nos pondremos en contacto contigo en menos de 24 horas hábiles para programar una llamada de diagnóstico técnico sin costo.';
-  
+
   const displayEmailLabel = emailLabel !== undefined ? emailLabel : 'Email Corporativo';
   const displayEmailValue = emailValue !== undefined ? emailValue : 'hola@revenge.agency';
-  
+
   const displayPhoneLabel = phoneLabel !== undefined ? phoneLabel : '';
   const displayPhoneValue = phoneValue !== undefined ? phoneValue : '';
   const displayPhoneLink = phoneLink !== undefined ? phoneLink : '';
-  
-  const displaySecurityTitle = securityTitle !== undefined ? securityTitle : 'Integración Segura CRM (Bigin by Zoho)';
-  const displaySecurityDesc = securityDescription !== undefined ? securityDescription : 'Tus datos viajan cifrados directamente a nuestro sistema CRM Bigin bajo estrictas políticas de confidencialidad.';
-  const displaySubmitText = submitButtonText || 'Contactar';
 
-  const biginXnQsjsdp = xnQsjsdp || 'c89333e5b18dc916843eb758f9590d84049a3d9220e08001403831ea2244de2f';
-  const biginXmIwtLD = xmIwtLD || '8c98928c34fe969c348950b0d09c4a5abd3902ea77f3e8f9da905dd432677fc41c267a089f9f2e4f61eb2ffb711116cc';
+  const displaySecurityTitle = securityTitle !== undefined ? securityTitle : 'Integración Segura con Zoho CRM';
+  const displaySecurityDesc = securityDescription !== undefined ? securityDescription : 'Tus datos viajan cifrados directamente a nuestro sistema Zoho CRM bajo estrictas políticas de confidencialidad.';
+  const displaySubmitText = submitButtonText || 'Enviar';
+
+  const validate = (form: HTMLFormElement): string | null => {
+    const lastName = (form.elements.namedItem('Last_Name') as HTMLInputElement | null)?.value.trim();
+    if (!lastName) return 'Los apellidos son obligatorios.';
+
+    const email = (form.elements.namedItem('Email') as HTMLInputElement | null)?.value.trim();
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) return 'Introduce una dirección de correo electrónico válida.';
+
+    return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = formRef.current;
+    if (!form) return;
+
+    const validationError = validate(form);
+    if (validationError) {
+      setStatus('error');
+      setErrorMessage(validationError);
+      onTrackEvent({
+        platform: 'Both',
+        eventName: 'lead_form_error',
+        data: { form_name: 'zoho_crm_contact_form', error: validationError }
+      });
+      return;
+    }
+
+    setStatus('submitting');
+    onTrackEvent({
+      platform: 'GTM',
+      eventName: 'lead_submission_attempt',
+      data: { form_name: 'zoho_crm_contact_form' }
+    });
+
+    const fd = new FormData(form);
+    const payload = {
+      First_Name: (fd.get('First_Name') as string) || '',
+      Last_Name: (fd.get('Last_Name') as string) || '',
+      Email: (fd.get('Email') as string) || '',
+      Mobile: (fd.get('Mobile') as string) || '',
+      Company: (fd.get('Company') as string) || '',
+      Description: (fd.get('Description') as string) || ''
+    };
+
+    try {
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        setStatus('error');
+        setErrorMessage(data.message || 'No pudimos registrar tu solicitud. Intenta de nuevo en unos minutos.');
+        onTrackEvent({
+          platform: 'Both',
+          eventName: 'lead_form_error',
+          data: { form_name: 'zoho_crm_contact_form', error: data.message }
+        });
+        return;
+      }
+
+      setStatus('success');
+      form.reset();
+      onTrackEvent({
+        platform: 'Both',
+        eventName: 'Lead',
+        data: {
+          form_name: 'zoho_crm_contact_form',
+          lead_source: 'sitio_oficial_revenge',
+          lead_id: data.leadId,
+          currency: 'USD'
+        }
+      });
+    } catch (err) {
+      setStatus('error');
+      setErrorMessage('No pudimos conectar con nuestro servidor. Revisa tu conexión o escríbenos directamente.');
+      onTrackEvent({
+        platform: 'Both',
+        eventName: 'lead_form_error',
+        data: { form_name: 'zoho_crm_contact_form', error: String(err) }
+      });
+    }
+  };
 
   return (
     <section id="contact" className={`py-24 border-t relative transition-colors duration-300 ${
       isLight ? 'bg-neutral-50 border-neutral-200 text-neutral-800' : 'bg-neutral-950 border-neutral-800 text-white'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
+
           {/* Left Column: Context & Direct Details */}
           <div className="lg:col-span-5 space-y-8">
             <div className="space-y-4">
@@ -144,66 +226,43 @@ export default function ContactForm({
             )}
           </div>
 
-          {/* Right Column: Bigin Official Web-to-Lead Form Styled */}
+          {/* Right Column: Contact Form (posts to our own /api/lead endpoint) */}
           <div className="lg:col-span-7">
             <div className={`rounded-3xl p-6 sm:p-8 border transition-all relative overflow-hidden ${
               isLight ? 'bg-white border-neutral-200 shadow-xl' : 'bg-neutral-900/60 border-neutral-800/90 shadow-2xl backdrop-blur-xl'
             }`}>
-              
-              <iframe
-                id="hidden7482990000000634003Frame"
-                name="hidden7482990000000634003Frame"
-                style={{ display: 'none' }}
-                className="w-full h-full border-none"
-              />
 
-              {submitted && (
-                <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-mono flex items-center justify-between">
-                  <span>✓ ¡Solicitud enviada! Nos pondremos en contacto a la brevedad.</span>
-                  <button onClick={() => setSubmitted(false)} className="text-xs text-white underline ml-4">
+              {status === 'success' && (
+                <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-mono flex items-center justify-between gap-3">
+                  <span className="flex items-center gap-2"><CheckCircle className="w-4 h-4 shrink-0" /> ¡Solicitud enviada! Nos pondremos en contacto a la brevedad.</span>
+                  <button type="button" onClick={() => setStatus('idle')} className="text-xs text-white underline shrink-0">
                     Enviar otro
                   </button>
                 </div>
               )}
 
+              {status === 'error' && (
+                <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-mono flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
               <form
-                id="BiginWebToRecordForm7482990000000634003"
-                name="BiginWebToRecordForm7482990000000634003"
-                action="https://bigin.zoho.com/crm/WebToContactForm"
-                method="POST"
-                target="hidden7482990000000634003Frame"
-                acceptCharset="UTF-8"
-                onSubmit={() => {
-                  setSubmitted(true);
-                  onTrackEvent({
-                    platform: 'Both',
-                    eventName: 'Lead',
-                    data: {
-                      form_name: 'bigin_contact_form',
-                      lead_source: 'sitio_oficial_revenge'
-                    }
-                  });
-                }}
+                ref={formRef}
+                onSubmit={handleSubmit}
                 className="space-y-5"
               >
-                {/* Hidden Fields for Bigin CRM */}
-                <input type="hidden" name="xnQsjsdp" value={biginXnQsjsdp} />
-                <input type="hidden" name="zc_gad" id="zc_gad" value="" />
-                <input type="hidden" name="xmIwtLD" value={biginXmIwtLD} />
-                <input type="hidden" name="actionType" value="Q29udGFjdHM=" />
-                <input type="hidden" name="rmsg" id="rmsg" value="true" />
-                <input type="hidden" name="returnURL" value="null" />
-
                 {/* Form Inputs Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  
+
                   {/* Nombre */}
                   <div className="space-y-1.5">
                     <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
                       Nombre
                     </label>
                     <input
-                      name="First Name"
+                      name="First_Name"
                       maxLength={40}
                       type="text"
                       placeholder="Ej. Fulanito"
@@ -215,13 +274,13 @@ export default function ContactForm({
                     />
                   </div>
 
-                  {/* Apellidos (Mandatorio en Bigin) */}
+                  {/* Apellidos (Mandatorio) */}
                   <div className="space-y-1.5">
                     <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
                       Apellidos <span className="text-brand-orange">*</span>
                     </label>
                     <input
-                      name="Last Name"
+                      name="Last_Name"
                       maxLength={80}
                       type="text"
                       required
@@ -237,7 +296,7 @@ export default function ContactForm({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  
+
                   {/* Correo Electrónico */}
                   <div className="space-y-1.5">
                     <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
@@ -256,14 +315,14 @@ export default function ContactForm({
                     />
                   </div>
 
-                  {/* Teléfono */}
+                  {/* Móvil */}
                   <div className="space-y-1.5">
                     <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
-                      Teléfono
+                      Móvil
                     </label>
                     <input
-                      name="Phone"
-                      maxLength={50}
+                      name="Mobile"
+                      maxLength={30}
                       type="tel"
                       placeholder="+52 55 1234 5678"
                       className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
@@ -274,6 +333,24 @@ export default function ContactForm({
                     />
                   </div>
 
+                </div>
+
+                {/* Empresa */}
+                <div className="space-y-1.5">
+                  <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                    Empresa
+                  </label>
+                  <input
+                    name="Company"
+                    maxLength={200}
+                    type="text"
+                    placeholder="Ej. Revenge Corp"
+                    className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
+                      isLight
+                        ? 'bg-neutral-50 text-neutral-900 border-neutral-300 focus:border-brand-orange focus:ring-brand-orange/20'
+                        : 'bg-neutral-950 text-white border-neutral-800 focus:border-brand-orange/60 focus:ring-brand-orange/20'
+                    }`}
+                  />
                 </div>
 
                 {/* Descripción / Requerimiento */}
@@ -297,25 +374,24 @@ export default function ContactForm({
                 {/* Submit Button */}
                 <div className="pt-2">
                   <button
-                    id="formsubmit"
                     type="submit"
-                    className="w-full bg-gradient-to-r from-brand-orange to-brand-red hover:shadow-[0_0_30px_rgba(255,94,58,0.4)] text-white text-xs font-extrabold uppercase tracking-wider py-4 rounded-xl transition-all cursor-pointer shadow-lg border-none flex items-center justify-center gap-2"
+                    disabled={status === 'submitting'}
+                    className="w-full bg-gradient-to-r from-brand-orange to-brand-red hover:shadow-[0_0_30px_rgba(255,94,58,0.4)] text-white text-xs font-extrabold uppercase tracking-wider py-4 rounded-xl transition-all cursor-pointer shadow-lg border-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:shadow-none"
                   >
-                    <span>{displaySubmitText}</span>
+                    {status === 'submitting' ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        <span>Enviando...</span>
+                      </>
+                    ) : (
+                      <span>{displaySubmitText}</span>
+                    )}
                   </button>
                 </div>
 
-                {/* Powered By Zoho Bigin footer */}
+                {/* Powered By Zoho footer */}
                 <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[11px] font-mono text-neutral-500">
-                  <span>Con tecnología de <strong className={isLight ? 'text-neutral-800' : 'text-neutral-300'}>Bigin by Zoho</strong></span>
-                  <a
-                    href="https://www.zoho.com/report-abuse"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-neutral-500 hover:text-brand-orange underline text-[10px]"
-                  >
-                    Notificar abuso
-                  </a>
+                  <span>Con tecnología de <strong className={isLight ? 'text-neutral-800' : 'text-neutral-300'}>Zoho CRM</strong></span>
                 </div>
 
               </form>

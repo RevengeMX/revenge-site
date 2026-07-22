@@ -199,8 +199,6 @@ export default function RevengeSiteClient({
                 phoneLink={block.phoneLink}
                 securityTitle={block.securityTitle}
                 securityDescription={block.securityDescription}
-                xnQsjsdp={block.xnQsjsdp}
-                xmIwtLD={block.xmIwtLD}
                 submitButtonText={block.submitButtonText}
                 gtmEventName={block.gtmEventName}
                 onTrackEvent={addTrackEvent}
