@@ -59,27 +59,13 @@ export const contactBlock = defineType({
       name: 'securityTitle',
       title: 'Security Box Title',
       type: 'string',
-      initialValue: 'Integración Segura CRM (Bigin by Zoho)',
+      initialValue: 'Integración Segura con Zoho CRM',
     }),
     defineField({
       name: 'securityDescription',
       title: 'Security Box Description',
       type: 'string',
-      initialValue: 'Tus datos viajan cifrados directamente a nuestro sistema CRM Bigin bajo estrictas políticas de confidencialidad.',
-    }),
-    defineField({
-      name: 'xnQsjsdp',
-      title: 'Bigin Form ID (xnQsjsdp)',
-      type: 'string',
-      description: 'Clave pública del formulario de Bigin',
-      initialValue: 'c89333e5b18dc916843eb758f9590d84049a3d9220e08001403831ea2244de2f',
-    }),
-    defineField({
-      name: 'xmIwtLD',
-      title: 'Bigin Form Action ID (xmIwtLD)',
-      type: 'string',
-      description: 'Token de acción del formulario de Bigin',
-      initialValue: '8c98928c34fe969c348950b0d09c4a5abd3902ea77f3e8f9da905dd432677fc41c267a089f9f2e4f61eb2ffb711116cc',
+      initialValue: 'Tus datos viajan cifrados directamente a nuestro sistema Zoho CRM bajo estrictas políticas de confidencialidad.',
     }),
     defineField({
       name: 'submitButtonText',
@@ -94,8 +80,8 @@ export const contactBlock = defineType({
     },
     prepare({ title }) {
       return {
-        title: title || 'Sección de Contacto (Bigin CRM)',
-        subtitle: 'Formulario Web-to-Lead Bigin',
+        title: title || 'Sección de Contacto (Zoho CRM)',
+        subtitle: 'Formulario de Leads — Zoho CRM',
         media: EnvelopeIcon,
       }
     },
