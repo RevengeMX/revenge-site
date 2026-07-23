@@ -47,8 +47,10 @@ const PAGE_DATA_QUERY = defineQuery(`{
   }
 }`);
 
+const PAGE_DATA_TAGS = ["siteSettings", "landingPage", "partner", "service", "cliente"];
+
 export async function generateMetadata() {
-  const response = await sanityFetch({ query: PAGE_DATA_QUERY });
+  const response = await sanityFetch({ query: PAGE_DATA_QUERY, tags: PAGE_DATA_TAGS, stega: false });
   const data = response.data as any;
   const lp = data.landingPage;
 
@@ -69,7 +71,7 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const response = await sanityFetch({ query: PAGE_DATA_QUERY });
+  const response = await sanityFetch({ query: PAGE_DATA_QUERY, tags: PAGE_DATA_TAGS });
   const data = response.data as any;
 
   const siteSettings: SiteSettings = data.siteSettings || {

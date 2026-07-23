@@ -6,6 +6,7 @@ import "./globals.css";
 import { SanityLive, sanityFetch } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { draftMode } from "next/headers";
+import { DisableDraftMode } from "@/components/DisableDraftMode";
 import { defineQuery } from "next-sanity";
 import { GTM_ID, GA4_ID } from "@/lib/gtm";
 
@@ -26,7 +27,7 @@ const LAYOUT_QUERY = defineQuery(`
 `);
 
 export async function generateMetadata(): Promise<Metadata> {
-  const response = await sanityFetch({ query: LAYOUT_QUERY });
+  const response = await sanityFetch({ query: LAYOUT_QUERY, tags: ["siteSettings"], stega: false });
   const data = response.data as any;
   const faviconUrl = data?.favicon?.asset?.url;
 
@@ -54,10 +55,15 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {children}
+        {/* Renders for every visitor, not just draft mode: this is what lets
+            published content changes reach the public site without SSR or a
+            webhook — Sanity's Live Content API pushes a revalidation the
+            moment content is published. */}
+        <SanityLive />
         {isDraftMode && (
           <>
-            <SanityLive />
             <VisualEditing />
+            <DisableDraftMode />
           </>
         )}
       </body>
