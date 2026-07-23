@@ -53,11 +53,15 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+const PAGE_DATA_TAGS = ["siteSettings", "page", "partner", "service", "cliente"];
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const response = await sanityFetch({
     query: PAGE_DATA_QUERY,
     params: { slug },
+    tags: PAGE_DATA_TAGS,
+    stega: false,
   });
   const data = response.data as any;
   const page = data?.page;
@@ -85,6 +89,7 @@ export default async function CustomPage({ params }: PageProps) {
   const response = await sanityFetch({
     query: PAGE_DATA_QUERY,
     params: { slug },
+    tags: PAGE_DATA_TAGS,
   });
   const data = response.data as any;
   
