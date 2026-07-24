@@ -41,9 +41,13 @@ const PAGE_DATA_QUERY = defineQuery(`{
         ...,
         services[]->
       },
-      _type == "clientesBlock" => {
+      _type == "currentClientsBlock" => {
         ...,
-        clientCases[]->
+        clients[]->{
+          name,
+          website,
+          logo{ asset->{ _id, url, metadata { dimensions } } }
+        }
       }
     }
   }
@@ -53,7 +57,7 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-const PAGE_DATA_TAGS = ["siteSettings", "page", "partner", "service", "cliente"];
+const PAGE_DATA_TAGS = ["siteSettings", "page", "partner", "service", "currentClient"];
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

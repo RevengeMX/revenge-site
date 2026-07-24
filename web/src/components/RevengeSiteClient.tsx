@@ -5,7 +5,7 @@ import Header from './Header';
 import Hero from './Hero';
 import Partners from './Partners';
 import Services from './Services';
-import Clientes from './Clientes';
+import CurrentClientsCarousel from './CurrentClientsCarousel';
 import ContactForm from './ContactForm';
 import TextContent from './TextContent';
 import MarketingTracker from './MarketingTracker';
@@ -175,12 +175,14 @@ export default function RevengeSiteClient({
                 onTrackEvent={addTrackEvent}
               />
             );
-          case 'clientesBlock':
+          case 'currentClientsBlock':
             return (
-              <Clientes
+              <CurrentClientsCarousel
                 key={block._key}
                 theme={theme}
-                clientCases={block.clientCases || []}
+                title={block.title}
+                subtitle={block.subtitle}
+                clients={block.clients || []}
                 onTrackEvent={addTrackEvent}
               />
             );
@@ -208,6 +210,7 @@ export default function RevengeSiteClient({
             return (
               <TextContent
                 key={block._key}
+                theme={theme}
                 title={block.title}
                 subtitle={block.subtitle}
                 content={block.content}

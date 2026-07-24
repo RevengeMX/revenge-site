@@ -39,15 +39,19 @@ const PAGE_DATA_QUERY = defineQuery(`{
         ...,
         services[]->
       },
-      _type == "clientesBlock" => {
+      _type == "currentClientsBlock" => {
         ...,
-        clientCases[]->
+        clients[]->{
+          name,
+          website,
+          logo{ asset->{ _id, url, metadata { dimensions } } }
+        }
       }
     }
   }
 }`);
 
-const PAGE_DATA_TAGS = ["siteSettings", "landingPage", "partner", "service", "cliente"];
+const PAGE_DATA_TAGS = ["siteSettings", "landingPage", "partner", "service", "currentClient"];
 
 export async function generateMetadata() {
   const response = await sanityFetch({ query: PAGE_DATA_QUERY, tags: PAGE_DATA_TAGS, stega: false });

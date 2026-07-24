@@ -28,19 +28,12 @@ export interface Partner {
   accentColor?: string;
 }
 
-export interface ClientCase {
+export interface CurrentClient {
   _id?: string;
   _key?: string;
-  id?: string;
   name: string;
-  industry: string;
-  metric: string;
-  metricLabel: string;
-  summary: string;
-  quote: string;
-  author: string;
-  role: string;
-  tag: 'eCommerce' | 'Headless' | 'Mobile';
+  logo?: { asset?: { _id?: string; url?: string; metadata?: { dimensions?: { width?: number; height?: number } } } };
+  website?: string;
 }
 
 export interface NavItem {
@@ -114,11 +107,11 @@ export type PageBlock =
       services: Service[];
     }
   | {
-      _type: 'clientesBlock';
+      _type: 'currentClientsBlock';
       _key: string;
-      title: string;
-      description: string;
-      clientCases: ClientCase[];
+      title?: string;
+      subtitle?: string;
+      clients: CurrentClient[];
     }
   | {
       _type: 'contactBlock';

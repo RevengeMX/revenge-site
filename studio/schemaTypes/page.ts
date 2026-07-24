@@ -44,7 +44,7 @@ export const page = defineType({
         { type: 'textContentBlock' },
         { type: 'partnersBlock' },
         { type: 'servicesBlock' },
-        { type: 'clientesBlock' },
+        { type: 'currentClientsBlock' },
         { type: 'contactBlock' },
       ],
     }),

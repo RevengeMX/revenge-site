@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Menu, X, ArrowUpRight, Sun, Moon } from 'lucide-react';
 import Logo from './Logo';
 import { MarketingEvent } from '../types';
+import Link from 'next/link';
 
 interface HeaderProps {
   theme?: 'dark' | 'light';
@@ -82,10 +83,9 @@ export default function Header({
           
           {/* Left Side Group: Logo + Left Aligned Nav Links */}
           <div className="flex items-center gap-10">
-            <a
+            <Link
               id="brand-logo-link"
-              href="#root"
-              onClick={() => handleNavClick('Home Logo', '#root')}
+              href="/"
               className="flex items-center gap-2 focus:outline-none"
             >
               <Logo
@@ -97,7 +97,7 @@ export default function Header({
                 logoHeightDesktop={logoHeightDesktop}
                 logoHeightMobile={logoHeightMobile}
               />
-            </a>
+            </Link>
 
             <nav className="hidden md:flex items-center gap-7">
               {resolvedNavItems.map((item, idx) => {

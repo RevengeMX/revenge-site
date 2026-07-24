@@ -24,3 +24,27 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes clients-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Track content is duplicated once, so -50% is exactly one full set. */
+    transform: translateX(-50%);
+  }
+}
+
+.clients-marquee-track {
+  animation: clients-marquee-scroll 30s linear infinite;
+}
+
+.clients-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clients-marquee-track {
+    animation: none;
+  }
+}

@@ -32,7 +32,7 @@ export const landingPage = defineType({
         { type: 'heroBlock' },
         { type: 'partnersBlock' },
         { type: 'servicesBlock' },
-        { type: 'clientesBlock' },
+        { type: 'currentClientsBlock' },
         { type: 'contactBlock' },
       ],
     }),
