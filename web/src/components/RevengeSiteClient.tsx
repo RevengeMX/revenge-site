@@ -141,6 +141,11 @@ export default function RevengeSiteClient({
                   promoBadgeText: block.promoBadgeText || '',
                   bullets: block.bullets,
                   buttons: block.buttons,
+                  visualType: block.visualType,
+                  visualImage: block.visualImage,
+                  visualVideoFile: block.visualVideoFile,
+                  visualVideoUrl: block.visualVideoUrl,
+                  visualPosition: block.visualPosition,
                   logoIcon: siteSettings?.logoIcon,
                   logoText: siteSettings?.logoText,
                 }}

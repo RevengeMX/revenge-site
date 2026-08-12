@@ -85,6 +85,11 @@ export type PageBlock =
         href?: string;
         style?: 'primary' | 'secondary' | 'tertiary';
       }[];
+      visualType?: 'none' | 'image' | 'video' | 'interactive';
+      visualImage?: { asset?: { _id?: string; url?: string; metadata?: { dimensions?: { width?: number; height?: number } } } };
+      visualVideoFile?: { asset?: { _id?: string; url?: string; mimeType?: string } };
+      visualVideoUrl?: string;
+      visualPosition?: 'background' | 'right' | 'left' | 'below';
     }
   | {
       _type: 'partnersBlock';

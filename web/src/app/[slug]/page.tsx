@@ -30,6 +30,11 @@ const PAGE_DATA_QUERY = defineQuery(`{
     shareImage{ asset->{ _id, url } },
     pageBuilder[]{
       ...,
+      _type == "heroBlock" => {
+        ...,
+        visualImage{ asset->{ _id, url, metadata { dimensions } } },
+        visualVideoFile{ asset->{ _id, url, mimeType } }
+      },
       _type == "partnersBlock" => {
         ...,
         partners[]->{
