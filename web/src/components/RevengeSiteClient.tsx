@@ -238,6 +238,8 @@ export default function RevengeSiteClient({
                 secondaryCtaLabel={block.secondaryCtaLabel}
                 secondaryCtaHref={block.secondaryCtaHref}
                 phoneMockupImage={block.phoneMockupImage}
+                appStoreBadgeImage={block.appStoreBadgeImage}
+                playStoreBadgeImage={block.playStoreBadgeImage}
                 onTrackEvent={addTrackEvent}
               />
             );

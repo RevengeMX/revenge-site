@@ -13,6 +13,8 @@ interface ProductHeroProps {
   secondaryCtaLabel?: string;
   secondaryCtaHref?: string;
   phoneMockupImage?: { asset?: { url?: string; metadata?: { dimensions?: { width?: number; height?: number } } } };
+  appStoreBadgeImage?: { asset?: { url?: string } };
+  playStoreBadgeImage?: { asset?: { url?: string } };
   theme?: 'dark' | 'light';
   onTrackEvent: (event: Omit<MarketingEvent, 'id' | 'timestamp'>) => void;
 }
@@ -27,6 +29,8 @@ export default function ProductHero({
   secondaryCtaLabel,
   secondaryCtaHref,
   phoneMockupImage,
+  appStoreBadgeImage,
+  playStoreBadgeImage,
   theme = 'dark',
   onTrackEvent
 }: ProductHeroProps) {
@@ -98,6 +102,33 @@ export default function ProductHero({
                 </a>
               )}
             </div>
+
+            {(appStoreBadgeImage?.asset?.url || playStoreBadgeImage?.asset?.url) && (
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                {appStoreBadgeImage?.asset?.url && (
+                  <a href={primaryCtaHref || '#cta-final'} onClick={() => handleCtaClick('app_store_badge')}>
+                    <Image
+                      src={appStoreBadgeImage.asset.url}
+                      alt="Descargar en App Store"
+                      width={135}
+                      height={40}
+                      className="h-10 w-auto object-contain"
+                    />
+                  </a>
+                )}
+                {playStoreBadgeImage?.asset?.url && (
+                  <a href={primaryCtaHref || '#cta-final'} onClick={() => handleCtaClick('play_store_badge')}>
+                    <Image
+                      src={playStoreBadgeImage.asset.url}
+                      alt="Descargar en Google Play"
+                      width={135}
+                      height={40}
+                      className="h-10 w-auto object-contain"
+                    />
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
           {hasMockup && (
