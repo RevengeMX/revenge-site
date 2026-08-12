@@ -8,6 +8,14 @@ import Services from './Services';
 import CurrentClientsCarousel from './CurrentClientsCarousel';
 import ContactForm from './ContactForm';
 import TextContent from './TextContent';
+import ProductHero from './product-landing/ProductHero';
+import ProductHowItWorks from './product-landing/ProductHowItWorks';
+import ProductFeatureGrid from './product-landing/ProductFeatureGrid';
+import ProductHighlight from './product-landing/ProductHighlight';
+import ProductAudienceGrid from './product-landing/ProductAudienceGrid';
+import ProductScreenshotShowcase from './product-landing/ProductScreenshotShowcase';
+import ProductClientsCarousel from './product-landing/ProductClientsCarousel';
+import ProductCta from './product-landing/ProductCta';
 import MarketingTracker from './MarketingTracker';
 import Logo from './Logo';
 import { MarketingEvent, SiteSettings, PageBlock } from '../types';
@@ -219,6 +227,102 @@ export default function RevengeSiteClient({
                 title={block.title}
                 subtitle={block.subtitle}
                 content={block.content}
+              />
+            );
+          case 'productHeroBlock':
+            return (
+              <ProductHero
+                key={block._key}
+                theme={theme}
+                productLogoLight={block.productLogoLight}
+                eyebrow={block.eyebrow}
+                headline={block.headline}
+                subheadline={block.subheadline}
+                primaryCtaLabel={block.primaryCtaLabel}
+                primaryCtaHref={block.primaryCtaHref}
+                secondaryCtaLabel={block.secondaryCtaLabel}
+                secondaryCtaHref={block.secondaryCtaHref}
+                phoneMockupImage={block.phoneMockupImage}
+                appStoreBadgeImage={block.appStoreBadgeImage}
+                playStoreBadgeImage={block.playStoreBadgeImage}
+                onTrackEvent={addTrackEvent}
+              />
+            );
+          case 'productHowItWorksBlock':
+            return (
+              <ProductHowItWorks
+                key={block._key}
+                theme={theme}
+                title={block.title}
+                subtitle={block.subtitle}
+                steps={block.steps}
+              />
+            );
+          case 'productFeatureGridBlock':
+            return (
+              <ProductFeatureGrid
+                key={block._key}
+                theme={theme}
+                title={block.title}
+                subtitle={block.subtitle}
+                features={block.features}
+              />
+            );
+          case 'productHighlightBlock':
+            return (
+              <ProductHighlight
+                key={block._key}
+                theme={theme}
+                badgeText={block.badgeText}
+                title={block.title}
+                description={block.description}
+                bullets={block.bullets}
+                accentColor={block.accentColor}
+                badgeImage={block.badgeImage}
+              />
+            );
+          case 'productAudienceGridBlock':
+            return (
+              <ProductAudienceGrid
+                key={block._key}
+                theme={theme}
+                title={block.title}
+                subtitle={block.subtitle}
+                audiences={block.audiences}
+              />
+            );
+          case 'productScreenshotShowcaseBlock':
+            return (
+              <ProductScreenshotShowcase
+                key={block._key}
+                theme={theme}
+                title={block.title}
+                subtitle={block.subtitle}
+                screenshots={block.screenshots}
+              />
+            );
+          case 'productClientsBlock':
+            return (
+              <ProductClientsCarousel
+                key={block._key}
+                theme={theme}
+                title={block.title}
+                clients={block.clients}
+              />
+            );
+          case 'productCtaBlock':
+            return (
+              <ProductCta
+                key={block._key}
+                theme={theme}
+                badgeText={block.badgeText}
+                title={block.title}
+                subtitle={block.subtitle}
+                submitButtonText={block.submitButtonText}
+                emailValue={block.emailValue}
+                phoneValue={block.phoneValue}
+                phoneLink={block.phoneLink}
+                onTrackEvent={addTrackEvent}
               />
             );
           default:
