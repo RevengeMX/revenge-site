@@ -36,6 +36,36 @@ export interface CurrentClient {
   website?: string;
 }
 
+// --- Product landing kit (CheckApp and future product landings) ---
+
+export interface ProductImageRef {
+  asset?: { _id?: string; url?: string; metadata?: { dimensions?: { width?: number; height?: number } } };
+}
+
+export interface ProductFeature {
+  title?: string;
+  description?: string;
+  accentColor?: string;
+  icon?: ProductImageRef;
+}
+
+export interface ProductStep {
+  title?: string;
+  description?: string;
+}
+
+export interface ProductAudience {
+  profile?: string;
+  benefit?: string;
+  accentColor?: string;
+}
+
+export interface ProductScreenshot {
+  group?: 'app' | 'panel';
+  image?: ProductImageRef;
+  caption?: string;
+}
+
 export interface NavItem {
   label: string;
   href: string;
@@ -85,6 +115,11 @@ export type PageBlock =
         href?: string;
         style?: 'primary' | 'secondary' | 'tertiary';
       }[];
+      visualType?: 'none' | 'image' | 'video' | 'interactive';
+      visualImage?: { asset?: { _id?: string; url?: string; metadata?: { dimensions?: { width?: number; height?: number } } } };
+      visualVideoFile?: { asset?: { _id?: string; url?: string; mimeType?: string } };
+      visualVideoUrl?: string;
+      visualPosition?: 'background' | 'right' | 'left' | 'below';
     }
   | {
       _type: 'partnersBlock';
@@ -137,6 +172,76 @@ export type PageBlock =
       title?: string;
       subtitle?: string;
       content?: any[];
+    }
+  | {
+      _type: 'productHeroBlock';
+      _key: string;
+      productLogoLight?: ProductImageRef;
+      eyebrow?: string;
+      headline: string;
+      subheadline?: string;
+      primaryCtaLabel?: string;
+      primaryCtaHref?: string;
+      secondaryCtaLabel?: string;
+      secondaryCtaHref?: string;
+      phoneMockupImage?: ProductImageRef;
+      appStoreBadgeImage?: ProductImageRef;
+      playStoreBadgeImage?: ProductImageRef;
+    }
+  | {
+      _type: 'productHowItWorksBlock';
+      _key: string;
+      title?: string;
+      subtitle?: string;
+      steps?: ProductStep[];
+    }
+  | {
+      _type: 'productFeatureGridBlock';
+      _key: string;
+      title?: string;
+      subtitle?: string;
+      features?: ProductFeature[];
+    }
+  | {
+      _type: 'productHighlightBlock';
+      _key: string;
+      badgeText?: string;
+      title?: string;
+      description?: string;
+      bullets?: string[];
+      accentColor?: string;
+      badgeImage?: ProductImageRef;
+    }
+  | {
+      _type: 'productAudienceGridBlock';
+      _key: string;
+      title?: string;
+      subtitle?: string;
+      audiences?: ProductAudience[];
+    }
+  | {
+      _type: 'productScreenshotShowcaseBlock';
+      _key: string;
+      title?: string;
+      subtitle?: string;
+      screenshots?: ProductScreenshot[];
+    }
+  | {
+      _type: 'productClientsBlock';
+      _key: string;
+      title?: string;
+      clients?: CurrentClient[];
+    }
+  | {
+      _type: 'productCtaBlock';
+      _key: string;
+      badgeText?: string;
+      title?: string;
+      subtitle?: string;
+      submitButtonText?: string;
+      emailValue?: string;
+      phoneValue?: string;
+      phoneLink?: string;
     };
 
 export interface LandingPageData {

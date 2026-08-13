@@ -48,3 +48,20 @@ body {
     animation: none;
   }
 }
+
+/* Product landing kit (CheckApp and future product landings) — kept
+   separate from .clients-marquee-track above so the two component
+   families never collide if both ever render on the same page. */
+.product-clients-marquee-track {
+  animation: clients-marquee-scroll 30s linear infinite;
+}
+
+.product-clients-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-clients-marquee-track {
+    animation: none;
+  }
+}

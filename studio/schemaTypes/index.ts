@@ -9,6 +9,14 @@ import { servicesBlock } from './blocks/servicesBlock'
 import { currentClientsBlock } from './blocks/currentClientsBlock'
 import { contactBlock } from './blocks/contactBlock'
 import { textContentBlock } from './blocks/textContentBlock'
+import { productHeroBlock } from './blocks/productHeroBlock'
+import { productHowItWorksBlock } from './blocks/productHowItWorksBlock'
+import { productFeatureGridBlock } from './blocks/productFeatureGridBlock'
+import { productHighlightBlock } from './blocks/productHighlightBlock'
+import { productAudienceGridBlock } from './blocks/productAudienceGridBlock'
+import { productScreenshotShowcaseBlock } from './blocks/productScreenshotShowcaseBlock'
+import { productClientsBlock } from './blocks/productClientsBlock'
+import { productCtaBlock } from './blocks/productCtaBlock'
 import { page } from './page'
 
 export const schemaTypes = [
@@ -23,5 +31,13 @@ export const schemaTypes = [
   currentClientsBlock,
   contactBlock,
   textContentBlock,
+  productHeroBlock,
+  productHowItWorksBlock,
+  productFeatureGridBlock,
+  productHighlightBlock,
+  productAudienceGridBlock,
+  productScreenshotShowcaseBlock,
+  productClientsBlock,
+  productCtaBlock,
   page,
 ]

@@ -10,7 +10,13 @@ interface LeadPayload {
   Mobile?: string;
   Company?: string;
   Description?: string;
+  source?: string;
 }
+
+const SOURCE_LABELS: Record<string, string> = {
+  main: 'Sitio principal (revengemx.com)',
+  checkapp: 'Landing CheckApp'
+};
 
 const ERROR_MESSAGES: Record<string, string> = {
   MANDATORY_NOT_FOUND: 'Falta un campo obligatorio.',
@@ -61,7 +67,12 @@ export async function POST(req: Request) {
   if (body.Email?.trim()) record.Email = body.Email.trim();
   if (body.Mobile?.trim()) record.Mobile = body.Mobile.trim();
   if (body.Company?.trim()) record.Company = body.Company.trim();
-  if (body.Description?.trim()) record.Description = body.Description.trim();
+
+  const sourceLabel = body.source && SOURCE_LABELS[body.source];
+  const sourceTag = sourceLabel ? `[Origen: ${sourceLabel}]` : '';
+  const userDescription = body.Description?.trim() || '';
+  const description = [sourceTag, userDescription].filter(Boolean).join('\n\n');
+  if (description) record.Description = description;
 
   try {
     const accessToken = await getAccessToken();

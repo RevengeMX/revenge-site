@@ -28,6 +28,11 @@ const PAGE_DATA_QUERY = defineQuery(`{
     shareImage{ asset->{ _id, url } },
     pageBuilder[]{
       ...,
+      _type == "heroBlock" => {
+        ...,
+        visualImage{ asset->{ _id, url, metadata { dimensions } } },
+        visualVideoFile{ asset->{ _id, url, mimeType } }
+      },
       _type == "partnersBlock" => {
         ...,
         partners[]->{
@@ -45,6 +50,38 @@ const PAGE_DATA_QUERY = defineQuery(`{
           name,
           website,
           logo{ asset->{ _id, url, metadata { dimensions } } }
+        }
+      },
+      _type == "productHeroBlock" => {
+        ...,
+        productLogoLight{ asset->{ _id, url } },
+        phoneMockupImage{ asset->{ _id, url, metadata { dimensions } } },
+        appStoreBadgeImage{ asset->{ _id, url } },
+        playStoreBadgeImage{ asset->{ _id, url } }
+      },
+      _type == "productFeatureGridBlock" => {
+        ...,
+        features[]{
+          ...,
+          icon{ asset->{ _id, url } }
+        }
+      },
+      _type == "productHighlightBlock" => {
+        ...,
+        badgeImage{ asset->{ _id, url } }
+      },
+      _type == "productScreenshotShowcaseBlock" => {
+        ...,
+        screenshots[]{
+          ...,
+          image{ asset->{ _id, url } }
+        }
+      },
+      _type == "productClientsBlock" => {
+        ...,
+        clients[]->{
+          name,
+          logo{ asset->{ _id, url } }
         }
       }
     }

@@ -71,6 +71,65 @@ export const heroBlock = defineType({
         {label: 'Cotiza tu proyecto', href: '#contact', style: 'primary'},
       ],
     }),
+    defineField({
+      name: 'visualType',
+      title: 'Elemento Visual',
+      type: 'string',
+      description: 'Si no eliges nada, el Hero se muestra solo con texto.',
+      options: {
+        list: [
+          {title: 'Ninguno', value: 'none'},
+          {title: 'Imagen', value: 'image'},
+          {title: 'Video', value: 'video'},
+          {title: 'Interactivo (Code Card 3D)', value: 'interactive'},
+        ],
+        layout: 'radio',
+      },
+    }),
+    defineField({
+      name: 'visualImage',
+      title: 'Imagen',
+      type: 'image',
+      options: {hotspot: true},
+      hidden: ({parent}) => parent?.visualType !== 'image',
+    }),
+    defineField({
+      name: 'visualVideoFile',
+      title: 'Video (archivo subido)',
+      type: 'file',
+      options: {accept: 'video/*'},
+      hidden: ({parent}) => parent?.visualType !== 'video',
+    }),
+    defineField({
+      name: 'visualVideoUrl',
+      title: 'Video (URL externa)',
+      type: 'url',
+      description: 'Alternativa a subir un archivo: liga a un .mp4, YouTube o Vimeo. Si subes un archivo, el archivo tiene prioridad.',
+      hidden: ({parent}) => parent?.visualType !== 'video',
+    }),
+    defineField({
+      name: 'visualPosition',
+      title: 'Posición del Elemento Visual',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Fondo del Hero', value: 'background'},
+          {title: 'Derecha del texto', value: 'right'},
+          {title: 'Izquierda del texto', value: 'left'},
+          {title: 'Abajo del texto', value: 'below'},
+        ],
+      },
+      initialValue: 'below',
+      hidden: ({parent}) => !parent?.visualType || parent.visualType === 'none',
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const parent = context.parent as {visualType?: string} | undefined
+          if (parent?.visualType === 'interactive' && value === 'background') {
+            return 'El elemento interactivo no puede usarse como fondo. Elige derecha, izquierda o abajo.'
+          }
+          return true
+        }),
+    }),
   ],
   preview: {
     select: {
