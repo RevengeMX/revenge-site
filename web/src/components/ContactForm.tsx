@@ -373,11 +373,16 @@ export default function ContactForm({
                 </div>
 
                 {/* Submit Button */}
-                <div className="pt-2">
+                <div className="pt-2 flex items-center justify-center">
                   <button
                     type="submit"
                     disabled={status === 'submitting'}
-                    className="w-full bg-gradient-to-r from-brand-orange to-brand-red hover:shadow-[0_0_30px_rgba(255,94,58,0.4)] text-white text-xs font-extrabold uppercase tracking-wider py-4 rounded-xl transition-all cursor-pointer shadow-lg border-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:shadow-none"
+                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 text-xs font-extrabold uppercase tracking-wider px-8 py-4 rounded-xl transition-all cursor-pointer border ${
+                isLight
+                    ? 'bg-neutral-900 text-white border-neutral-900 hover:bg-neutral-800 hover:shadow-[0_6px_25px_rgba(255,94,58,0.45)]'
+                    : 'bg-white text-neutral-950 border-white hover:bg-neutral-100 hover:shadow-[0_6px_25px_rgba(255,94,58,0.45)]'
+              }`}
+                    
                   >
                     {status === 'submitting' ? (
                       <>
@@ -390,10 +395,10 @@ export default function ContactForm({
                   </button>
                 </div>
 
-                {/* Powered By Zoho footer */}
+                {/* Powered By Zoho footer 
                 <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-[11px] font-mono text-neutral-500">
                   <span>Con tecnología de <strong className={isLight ? 'text-neutral-800' : 'text-neutral-300'}>Zoho CRM</strong></span>
-                </div>
+                </div>*/}
 
               </form>
 
