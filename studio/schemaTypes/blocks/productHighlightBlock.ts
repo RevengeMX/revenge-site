@@ -31,6 +31,33 @@ export const productHighlightBlock = defineType({
       type: 'image',
       description: 'Ej. un sello o ícono de cumplimiento. Puede quedar vacío.',
     }),
+    defineField({
+      name: 'buttonLabel',
+      title: 'Texto del botón (opcional)',
+      type: 'string',
+      description: 'Si se deja vacío, no se muestra ningún botón.',
+    }),
+    defineField({
+      name: 'buttonHref',
+      title: 'Enlace interno del botón',
+      type: 'string',
+      description: 'Redirect interno: ancla de la misma página (ej. #cta-final) o ruta del sitio (ej. /checkapp#funcionalidades).',
+      hidden: ({parent}) => !parent?.buttonLabel,
+    }),
+    defineField({
+      name: 'buttonStyle',
+      title: 'Estilo del botón',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Primary (Color de acento)', value: 'primary'},
+          {title: 'Secondary (Gris Oscuro)', value: 'secondary'},
+          {title: 'Tertiary (Línea Borde Neutral)', value: 'tertiary'},
+        ],
+      },
+      initialValue: 'primary',
+      hidden: ({parent}) => !parent?.buttonLabel,
+    }),
   ],
   preview: {
     select: {title: 'title'},

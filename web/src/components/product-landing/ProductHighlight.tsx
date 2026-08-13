@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { stegaClean } from 'next-sanity';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 interface ProductHighlightProps {
   badgeText?: string;
@@ -10,6 +10,9 @@ interface ProductHighlightProps {
   bullets?: string[];
   accentColor?: string;
   badgeImage?: { asset?: { url?: string } };
+  buttonLabel?: string;
+  buttonHref?: string;
+  buttonStyle?: 'primary' | 'secondary' | 'tertiary';
   theme?: 'dark' | 'light';
 }
 
@@ -22,11 +25,15 @@ export default function ProductHighlight({
   bullets,
   accentColor,
   badgeImage,
+  buttonLabel,
+  buttonHref,
+  buttonStyle,
   theme = 'dark'
 }: ProductHighlightProps) {
   const isLight = theme === 'light';
   if (!title) return null;
   const accent = stegaClean(accentColor) || DEFAULT_ACCENT;
+  const style = stegaClean(buttonStyle) || 'primary';
   const hasImage = Boolean(badgeImage?.asset?.url);
   const validBullets = (bullets || []).filter(Boolean);
 
@@ -69,6 +76,28 @@ export default function ProductHighlight({
                     </li>
                   ))}
                 </ul>
+              )}
+              {buttonLabel && (
+                <div className="pt-3">
+                  <a
+                    href={buttonHref || '#cta-final'}
+                    className={`inline-flex items-center justify-center gap-2 text-xs font-extrabold uppercase tracking-wider px-7 py-4 rounded-xl transition-all hover:brightness-110 ${
+                      style === 'secondary'
+                        ? isLight
+                          ? 'bg-white border border-neutral-300 text-neutral-800 shadow-sm hover:bg-neutral-50'
+                          : 'bg-neutral-900 border border-neutral-800 text-neutral-300 hover:bg-neutral-800'
+                        : style === 'tertiary'
+                          ? isLight
+                            ? 'bg-transparent border border-neutral-300 text-neutral-700 hover:bg-neutral-100'
+                            : 'bg-transparent border border-white/15 text-neutral-300 hover:bg-white/5'
+                          : 'text-white border border-transparent'
+                    }`}
+                    style={style === 'primary' ? { backgroundColor: accent } : undefined}
+                  >
+                    <span>{buttonLabel}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
               )}
             </div>
 

@@ -279,6 +279,9 @@ export default function RevengeSiteClient({
                 bullets={block.bullets}
                 accentColor={block.accentColor}
                 badgeImage={block.badgeImage}
+                buttonLabel={block.buttonLabel}
+                buttonHref={block.buttonHref}
+                buttonStyle={block.buttonStyle}
               />
             );
           case 'productAudienceGridBlock':
