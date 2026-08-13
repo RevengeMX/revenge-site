@@ -67,7 +67,8 @@ export default function ProductCta({
       Email: (fd.get('Email') as string) || '',
       Mobile: (fd.get('Mobile') as string) || '',
       Company: (fd.get('Company') as string) || '',
-      Description: (fd.get('Description') as string) || ''
+      Description: (fd.get('Description') as string) || '',
+      source: 'checkapp'
     };
 
     try {
