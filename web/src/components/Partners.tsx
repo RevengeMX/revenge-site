@@ -129,12 +129,14 @@ export default function Partners({
                       </div>
                     )}
 
-                    <span className={`text-[10px] font-mono transition-colors flex items-center gap-1 ${
-                      isLight ? 'text-neutral-500 group-hover:text-neutral-900' : 'text-neutral-500 group-hover:text-neutral-300'
-                    }`}>
-                      <span>Partner</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </span>
+                    {partner.tagText && (
+                      <span className={`text-[10px] font-mono transition-colors flex items-center gap-1 ${
+                        isLight ? 'text-neutral-500 group-hover:text-neutral-900' : 'text-neutral-500 group-hover:text-neutral-300'
+                      }`}>
+                        <span>{partner.tagText}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </span>
+                    )}
                   </div>
 
                   {/* Partner Details */}
@@ -154,12 +156,27 @@ export default function Partners({
                 </div>
 
                 {/* Interaction Indicator */}
-                <div className={`pt-5 border-t mt-6 flex items-center gap-1.5 text-[10px] font-mono transition-colors ${
-                  isLight ? 'border-neutral-200 text-neutral-500 group-hover:text-neutral-900' : 'border-neutral-900/40 text-neutral-500 group-hover:text-white'
-                }`}>
-                  <span>Ver track de conversión</span>
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                </div>
+                {partner.conversionLabel && (
+                  partner.conversionLink ? (
+                    <a
+                      href={partner.conversionLink}
+                      onClick={(e) => e.stopPropagation()}
+                      className={`pt-5 border-t mt-6 flex items-center gap-1.5 text-[10px] font-mono transition-colors ${
+                        isLight ? 'border-neutral-200 text-neutral-500 hover:text-neutral-900' : 'border-neutral-900/40 text-neutral-500 hover:text-white'
+                      }`}
+                    >
+                      <span>{partner.conversionLabel}</span>
+                      <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </a>
+                  ) : (
+                    <div className={`pt-5 border-t mt-6 flex items-center gap-1.5 text-[10px] font-mono transition-colors ${
+                      isLight ? 'border-neutral-200 text-neutral-500 group-hover:text-neutral-900' : 'border-neutral-900/40 text-neutral-500 group-hover:text-white'
+                    }`}>
+                      <span>{partner.conversionLabel}</span>
+                      <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  )
+                )}
 
               </div>
             );

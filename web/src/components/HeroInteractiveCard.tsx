@@ -1,10 +1,19 @@
 import React, { useRef, useState } from 'react';
-import { Terminal, FileCode, Activity } from 'lucide-react';
+import { BarChart3, Zap, TrendingUp } from 'lucide-react';
 import Logo from './Logo';
 
 interface HeroInteractiveCardProps {
   theme?: 'dark' | 'light';
 }
+
+const CHANNELS = [
+  { name: 'SEO', value: '42%', color: '#fb2c36' },
+  { name: 'Google Ads', value: '31%', color: '#3080ff' },
+  { name: 'Email / CRM', value: '17%', color: '#00bb7f' },
+  { name: 'Social Ads', value: '10%', color: '#f99c00' }
+];
+
+const TRAFFIC_BARS = [28, 38, 46, 64, 82, 100];
 
 export default function HeroInteractiveCard({ theme = 'dark' }: HeroInteractiveCardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,59 +85,69 @@ export default function HeroInteractiveCard({ theme = 'dark' }: HeroInteractiveC
         <div className={`flex items-center gap-2 text-xs font-mono px-3 py-1 rounded-md border ${
           isLight ? 'bg-white border-neutral-300 text-neutral-800' : 'bg-neutral-900 border-neutral-800 text-neutral-300'
         }`}>
-          <FileCode className="w-3.5 h-3.5 text-brand-orange" />
-          <span>revenge.config.ts</span>
+          <BarChart3 className="w-3.5 h-3.5 text-brand-orange" />
+          <span>revenge-growth.report</span>
         </div>
         <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-400">
-          <span className="hidden sm:inline">Next.js + Sanity CMS</span>
+          <span className="hidden sm:inline">Datos en tiempo real</span>
         </div>
       </div>
 
-      {/* Editor Code Area */}
-      <div className={`p-6 sm:p-8 font-mono text-xs leading-relaxed text-left overflow-x-auto relative z-20 ${
-        isLight ? 'bg-neutral-900 text-neutral-300' : 'bg-neutral-950/70 text-neutral-300'
-      }`}>
-        <div className="flex gap-6">
-          <div className="text-neutral-600 select-none text-right font-mono pr-2 border-r border-neutral-800">
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-            <div>7</div>
-            <div>8</div>
-            <div>9</div>
-            <div>10</div>
+      {/* Growth Dashboard Area */}
+      <div className={`p-6 sm:p-7 text-left relative z-20 ${isLight ? 'bg-neutral-900' : 'bg-neutral-950/70'}`}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div className="bg-white/3 border border-white/10 rounded-xl px-3.5 py-3">
+            <div className="text-[9px] font-mono uppercase tracking-wider text-neutral-500 mb-1.5">Core Web Vitals</div>
+            <div className="text-lg font-mono font-extrabold text-brand-orange">98<span className="text-neutral-500 text-xs">/100</span></div>
           </div>
-          <div className="flex-1">
-            <div>
-              <span className="text-purple-400 font-semibold">import</span> {'{'} <span className="text-blue-400">createRevengeEngine</span> {'}'} <span className="text-purple-400">from</span> <span className="text-emerald-300">"@revenge/core"</span>;
+          <div className="bg-white/3 border border-white/10 rounded-xl px-3.5 py-3">
+            <div className="text-[9px] font-mono uppercase tracking-wider text-neutral-500 mb-1.5">Conversión</div>
+            <div className="text-lg font-mono font-extrabold text-blue-400">4.8%<span className="text-emerald-500 text-[10px] ml-1">▲62%</span></div>
+          </div>
+          <div className="bg-white/3 border border-white/10 rounded-xl px-3.5 py-3">
+            <div className="text-[9px] font-mono uppercase tracking-wider text-neutral-500 mb-1.5">ROAS</div>
+            <div className="text-lg font-mono font-extrabold text-amber-400">6.2x<span className="text-emerald-500 text-[10px] ml-1">▲2.1x</span></div>
+          </div>
+          <div className="bg-white/3 border border-white/10 rounded-xl px-3.5 py-3">
+            <div className="text-[9px] font-mono uppercase tracking-wider text-neutral-500 mb-1.5">Costo/Lead</div>
+            <div className="text-lg font-mono font-extrabold text-emerald-500">-38%</div>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-[1.3fr_1fr] gap-3">
+          <div className="bg-white/3 border border-white/10 rounded-xl p-4">
+            <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-neutral-500 mb-3">
+              <span>Tráfico Orgánico · 6 Meses</span>
+              <span className="text-brand-orange font-bold">+184%</span>
             </div>
-            <div>&nbsp;</div>
-            <div>
-              <span className="text-purple-400 font-semibold">export default</span> <span className="text-blue-400">createRevengeEngine</span>({'{'}
+            <div className="flex items-end gap-1.5 h-16">
+              {TRAFFIC_BARS.map((h, idx) => (
+                <div
+                  key={idx}
+                  className="flex-1 rounded-t-sm"
+                  style={{
+                    height: `${h}%`,
+                    background: idx < 3
+                      ? 'linear-gradient(180deg, rgba(251,44,54,0.35), rgba(255,94,58,0.25))'
+                      : 'linear-gradient(180deg, #fb2c36, #ff5e3a)'
+                  }}
+                />
+              ))}
             </div>
-            <div className="pl-6">
-              <span className="text-amber-300">architecture</span>: <span className="text-emerald-300">"Headless-Modular"</span>,
+          </div>
+          <div className="bg-white/3 border border-white/10 rounded-xl p-4">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-500 mb-3">Canales Activos</div>
+            <div className="space-y-2">
+              {CHANNELS.map((c) => (
+                <div key={c.name} className="flex items-center justify-between text-xs font-mono">
+                  <span className="flex items-center gap-2 text-neutral-300">
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: c.color }} />
+                    {c.name}
+                  </span>
+                  <span className="font-bold text-white">{c.value}</span>
+                </div>
+              ))}
             </div>
-            <div className="pl-6">
-              <span className="text-amber-300">cmsProvider</span>: <span className="text-emerald-300">"Sanity-CMS"</span>,
-            </div>
-            <div className="pl-6">
-              <span className="text-amber-300">partners</span>: [<span className="text-emerald-300">"Shopify"</span>, <span className="text-emerald-300">"TiendaNube"</span>],
-            </div>
-            <div className="pl-6">
-              <span className="text-amber-300">performance</span>: {'{'}
-            </div>
-            <div className="pl-10">
-              <span className="text-amber-300">lighthouseScore</span>: <span className="text-orange-400 font-bold">100</span>,
-            </div>
-            <div className="pl-10">
-              <span className="text-amber-300">interactiveAnimation</span>: <span className="text-orange-400 font-bold">true</span>
-            </div>
-            <div className="pl-6">{'}'}</div>
-            <div>{'}'});</div>
           </div>
         </div>
       </div>
@@ -140,12 +159,12 @@ export default function HeroInteractiveCard({ theme = 'dark' }: HeroInteractiveC
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className={isLight ? 'text-neutral-700' : 'text-neutral-300'}>Engine Active</span>
+            <span className={isLight ? 'text-neutral-700' : 'text-neutral-300'}>Optimización Activa</span>
           </div>
-          <span>•</span>
-          <span>Mouseover Animation Active</span>
+          <span className="hidden sm:inline">•</span>
+          <span className="hidden sm:inline">GA4 + Search Console</span>
         </div>
-        <span className="text-brand-orange font-semibold">Revenge-Style Layout</span>
+        <span className="text-brand-orange font-semibold">Revenge Growth Engine</span>
       </div>
 
       {/* Floating Parallax Badges */}
@@ -158,11 +177,11 @@ export default function HeroInteractiveCard({ theme = 'dark' }: HeroInteractiveC
         }}
       >
         <div className="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-500">
-          <Activity className="w-4 h-4 animate-pulse" />
+          <Zap className="w-4 h-4 animate-pulse" />
         </div>
         <div className="text-left">
           <div className={`text-[9px] font-mono uppercase tracking-wider font-bold ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>Performance</div>
-          <div className={`text-xs font-bold font-mono ${isLight ? 'text-neutral-900' : 'text-white'}`}>100% Score</div>
+          <div className={`text-xs font-bold font-mono ${isLight ? 'text-neutral-900' : 'text-white'}`}>98/100 Lighthouse</div>
         </div>
       </div>
 
@@ -175,13 +194,13 @@ export default function HeroInteractiveCard({ theme = 'dark' }: HeroInteractiveC
         }}
       >
         <div className="w-9 h-9 rounded-full bg-brand-orange/10 flex items-center justify-center border border-brand-orange/20 text-brand-orange">
-          <Terminal className="w-4 h-4" />
+          <TrendingUp className="w-4 h-4" />
         </div>
         <div className="text-left">
-          <div className={`text-[9px] font-mono uppercase tracking-wider font-bold ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>Mouse Interactive</div>
+          <div className={`text-[9px] font-mono uppercase tracking-wider font-bold ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>Marketing ROI</div>
           <div className={`text-xs font-bold font-mono flex items-center gap-1.5 ${isLight ? 'text-neutral-900' : 'text-white'}`}>
             <span className="w-1.5 h-1.5 rounded-full bg-brand-orange animate-ping"></span>
-            <span>3D Tilt Active</span>
+            <span>6.2x ROAS</span>
           </div>
         </div>
       </div>

@@ -26,6 +26,9 @@ export interface Partner {
   logoType?: 'shopify' | 'tiendanube' | 'contentful' | 'contento' | 'generic' | string;
   logoImage?: { asset?: { _id?: string; url?: string } };
   accentColor?: string;
+  tagText?: string;
+  conversionLabel?: string;
+  conversionLink?: string;
 }
 
 export interface CurrentClient {
@@ -211,6 +214,9 @@ export type PageBlock =
       bullets?: string[];
       accentColor?: string;
       badgeImage?: ProductImageRef;
+      buttonLabel?: string;
+      buttonHref?: string;
+      buttonStyle?: 'primary' | 'secondary' | 'tertiary';
     }
   | {
       _type: 'productAudienceGridBlock';
