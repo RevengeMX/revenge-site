@@ -53,6 +53,25 @@ export const partner = defineType({
       title: 'Orden de aparición',
       type: 'number',
     }),
+    defineField({
+      name: 'tagText',
+      title: 'Etiqueta superior de la tarjeta (ej. "Partner")',
+      type: 'string',
+      description: 'Si se deja vacío, no se muestra ninguna etiqueta en la tarjeta.',
+    }),
+    defineField({
+      name: 'conversionLabel',
+      title: 'Texto del enlace inferior (ej. "Ver track de conversión")',
+      type: 'string',
+      description: 'Si se deja vacío, no se muestra este enlace en la tarjeta.',
+    }),
+    defineField({
+      name: 'conversionLink',
+      title: 'Enlace del texto inferior (opcional)',
+      type: 'string',
+      description: 'URL externa o ancla interna (ej. #contact-section). Si se deja vacío, el texto se muestra sin enlace.',
+      hidden: ({parent}) => !parent?.conversionLabel,
+    }),
   ],
   preview: {
     select: {
