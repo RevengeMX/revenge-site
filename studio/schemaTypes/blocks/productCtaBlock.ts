@@ -6,7 +6,7 @@ export const productCtaBlock = defineType({
   title: 'Product: CTA Final / Contacto',
   type: 'object',
   icon: SparklesIcon,
-  description: 'Presentación visual propia para landings de producto. Envía al mismo backend de leads (Zoho CRM) que el resto del sitio — no reconstruye la integración, solo cambia el diseño.',
+  description: 'Presentación visual propia para landings de producto. Envía al mismo backend de leads (CRM de Revenge) que el resto del sitio — no reconstruye la integración, solo cambia el diseño.',
   fields: [
     defineField({name: 'badgeText', title: 'Badge (ej. "Empieza hoy")', type: 'string'}),
     defineField({name: 'title', title: 'Título', type: 'string'}),
