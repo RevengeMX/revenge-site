@@ -54,8 +54,8 @@ export default function ContactForm({
   const displayPhoneValue = phoneValue !== undefined ? phoneValue : '';
   const displayPhoneLink = phoneLink !== undefined ? phoneLink : '';
 
-  const displaySecurityTitle = securityTitle !== undefined ? securityTitle : 'Integración Segura con Zoho CRM';
-  const displaySecurityDesc = securityDescription !== undefined ? securityDescription : 'Tus datos viajan cifrados directamente a nuestro sistema Zoho CRM bajo estrictas políticas de confidencialidad.';
+  const displaySecurityTitle = securityTitle !== undefined ? securityTitle : 'Tus datos, protegidos';
+  const displaySecurityDesc = securityDescription !== undefined ? securityDescription : 'Tus datos viajan cifrados a nuestro sistema bajo estrictas políticas de confidencialidad.';
   const displaySubmitText = submitButtonText || 'Enviar';
 
   const validate = (form: HTMLFormElement): string | null => {
@@ -63,7 +63,7 @@ export default function ContactForm({
     if (!lastName) return 'Los apellidos son obligatorios.';
 
     const email = (form.elements.namedItem('Email') as HTMLInputElement | null)?.value.trim();
-    if (email && !/^\S+@\S+\.\S+$/.test(email)) return 'Introduce una dirección de correo electrónico válida.';
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) return 'Introduce una dirección de correo electrónico válida.';
 
     return null;
   };
@@ -80,7 +80,7 @@ export default function ContactForm({
       onTrackEvent({
         platform: 'Both',
         eventName: 'lead_form_error',
-        data: { form_name: 'zoho_crm_contact_form', error: validationError }
+        data: { form_name: 'contact_form', error: validationError }
       });
       return;
     }
@@ -89,7 +89,7 @@ export default function ContactForm({
     onTrackEvent({
       platform: 'GTM',
       eventName: 'lead_submission_attempt',
-      data: { form_name: 'zoho_crm_contact_form' }
+      data: { form_name: 'contact_form' }
     });
 
     const fd = new FormData(form);
@@ -117,7 +117,7 @@ export default function ContactForm({
         onTrackEvent({
           platform: 'Both',
           eventName: 'lead_form_error',
-          data: { form_name: 'zoho_crm_contact_form', error: data.message }
+          data: { form_name: 'contact_form', error: data.message }
         });
         return;
       }
@@ -128,7 +128,7 @@ export default function ContactForm({
         platform: 'Both',
         eventName: 'Lead',
         data: {
-          form_name: 'zoho_crm_contact_form',
+          form_name: 'contact_form',
           lead_source: 'sitio_oficial_revenge',
           lead_id: data.leadId,
           currency: 'USD'
@@ -140,7 +140,7 @@ export default function ContactForm({
       onTrackEvent({
         platform: 'Both',
         eventName: 'lead_form_error',
-        data: { form_name: 'zoho_crm_contact_form', error: String(err) }
+        data: { form_name: 'contact_form', error: String(err) }
       });
     }
   };
@@ -301,12 +301,13 @@ export default function ContactForm({
                   {/* Correo Electrónico */}
                   <div className="space-y-1.5">
                     <label className={`text-xs font-semibold block ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
-                      Correo electrónico
+                      Correo electrónico <span className="text-brand-orange">*</span>
                     </label>
                     <input
                       name="Email"
                       maxLength={100}
                       type="email"
+                      required
                       placeholder="contacto@empresa.com"
                       className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 transition-colors ${
                         isLight

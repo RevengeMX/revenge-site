@@ -59,13 +59,13 @@ export const contactBlock = defineType({
       name: 'securityTitle',
       title: 'Security Box Title',
       type: 'string',
-      initialValue: 'Integración Segura con Zoho CRM',
+      initialValue: 'Tus datos, protegidos',
     }),
     defineField({
       name: 'securityDescription',
       title: 'Security Box Description',
       type: 'string',
-      initialValue: 'Tus datos viajan cifrados directamente a nuestro sistema Zoho CRM bajo estrictas políticas de confidencialidad.',
+      initialValue: 'Tus datos viajan cifrados a nuestro sistema bajo estrictas políticas de confidencialidad.',
     }),
     defineField({
       name: 'submitButtonText',
@@ -80,8 +80,8 @@ export const contactBlock = defineType({
     },
     prepare({ title }) {
       return {
-        title: title || 'Sección de Contacto (Zoho CRM)',
-        subtitle: 'Formulario de Leads — Zoho CRM',
+        title: title || 'Sección de Contacto (CRM)',
+        subtitle: 'Formulario de Leads — CRM Revenge',
         media: EnvelopeIcon,
       }
     },

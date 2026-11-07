@@ -40,7 +40,7 @@ export default function ProductCta({
     const lastName = (form.elements.namedItem('Last_Name') as HTMLInputElement | null)?.value.trim();
     if (!lastName) return 'Los apellidos son obligatorios.';
     const email = (form.elements.namedItem('Email') as HTMLInputElement | null)?.value.trim();
-    if (email && !/^\S+@\S+\.\S+$/.test(email)) return 'Introduce una dirección de correo electrónico válida.';
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) return 'Introduce una dirección de correo electrónico válida.';
     return null;
   };
 
@@ -176,7 +176,8 @@ export default function ProductCta({
                 <input
                   name="Email"
                   type="email"
-                  placeholder="Correo electrónico"
+                  required
+                  placeholder="Correo electrónico *"
                   className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#fb2c36]/30 focus:border-[#fb2c36]/60 ${
                     isLight ? 'bg-neutral-50 border-neutral-300 text-neutral-900' : 'bg-white/5 border-white/15 text-white'
                   }`}
