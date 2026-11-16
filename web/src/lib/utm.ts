@@ -12,7 +12,8 @@ export function captureUtm(): Utm {
     const params = new URLSearchParams(window.location.search);
     const found: Utm = {};
     for (const key of KEYS) {
-      const value = params.get(key)?.trim().slice(0, 80);
+      // Por caracteres completos: cortar a la mitad un emoji dejaría texto que el CRM rechaza.
+      const value = Array.from(params.get(key)?.trim() ?? '').slice(0, 80).join('');
       if (value) found[key] = value;
     }
     if (Object.keys(found).length > 0) sessionStorage.setItem('utm', JSON.stringify(found));

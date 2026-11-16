@@ -10,15 +10,15 @@ const MESSENGER_URL = process.env.NEXT_PUBLIC_MESSENGER_URL ?? '';
 const TELEGRAM_URL = 'https://t.me/RevengeAssistantBot';
 
 type Button = { label: string; data: string };
-type Msg = { from: 'bot' | 'me'; text: string; buttons?: Button[][] };
+type Msg = { from: 'bot' | 'me'; text: string; buttons?: Button[] };
 
 const GREETING: Msg = {
   from: 'bot',
   text: 'Buen día. Soy el Asistente Revenge. Puedo contarle sobre nuestros servicios y registrar su solicitud.',
   buttons: [
-    [{ label: 'Ver servicios', data: 'services' }],
-    [{ label: 'Quiero información', data: 'prospect' }],
-    [{ label: 'Que me contacte una persona', data: 'human' }]
+    { label: 'Ver servicios', data: 'services' },
+    { label: 'Quiero información', data: 'prospect' },
+    { label: 'Que me contacte una persona', data: 'human' }
   ]
 };
 
@@ -39,20 +39,46 @@ function storage(kind: 'local' | 'session') {
   }
 }
 
+// Respaldo si el navegador bloquea localStorage: el id dura lo que dure la pestaña, para que
+// el diálogo (p. ej. el registro de datos) no se reinicie en cada mensaje.
+let fallbackId = '';
+
 function visitorId() {
   const store = storage('local');
-  let id = store?.getItem('rv-chat-visitor') ?? '';
-  if (!id) {
-    id = crypto.randomUUID();
+  let id = '';
+  try {
+    id = store?.getItem('rv-chat-visitor') ?? '';
+  } catch {
+    /* sin acceso al almacenamiento */
+  }
+  if (!id) id = fallbackId || crypto.randomUUID();
+  fallbackId = id;
+  try {
     store?.setItem('rv-chat-visitor', id);
+  } catch {
+    /* sin acceso al almacenamiento */
   }
   return id;
 }
 
+// Lo que llega del servidor o del almacenamiento se normaliza: nada ajeno llega al render.
+const cleanButtons = (raw: unknown): Button[] | undefined => {
+  if (!Array.isArray(raw)) return undefined;
+  const list = raw
+    .flat()
+    .filter((b): b is Button => typeof b?.label === 'string' && typeof b?.data === 'string');
+  return list.length ? list : undefined;
+};
+const cleanMsg = (m: { text?: unknown; buttons?: unknown; from?: unknown }): Msg | null =>
+  typeof m?.text === 'string'
+    ? { from: m.from === 'me' ? 'me' : 'bot', text: m.text, buttons: cleanButtons(m.buttons) }
+    : null;
+
 function savedMessages(): Msg[] {
   try {
     const saved = JSON.parse(storage('session')?.getItem('rv-chat-msgs') ?? 'null');
-    if (Array.isArray(saved) && saved.length) return saved;
+    const msgs = Array.isArray(saved) ? saved.map(cleanMsg).filter((m): m is Msg => !!m) : [];
+    if (msgs.length) return msgs;
   } catch {
     /* historial corrupto: se empieza de nuevo */
   }
@@ -62,18 +88,23 @@ function savedMessages(): Msg[] {
 // false en el servidor y en la hidratación, true después: evita diferencias con el HTML del servidor.
 const noopSubscribe = () => () => {};
 
-export default function AssistantChat() {
+function Chat() {
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [text, setText] = useState('');
   const [msgs, setMsgs] = useState<Msg[]>(savedMessages);
   const endRef = useRef<HTMLDivElement>(null);
+  const lastSend = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!mounted) return;
-    storage('session')?.setItem('rv-chat-msgs', JSON.stringify(msgs.slice(-50)));
+    try {
+      storage('session')?.setItem('rv-chat-msgs', JSON.stringify(msgs.slice(-50)));
+    } catch {
+      /* almacenamiento lleno o bloqueado: el chat sigue sin recordar el historial */
+    }
     endRef.current?.scrollIntoView({ block: 'end' });
   }, [msgs, mounted]);
 
@@ -85,7 +116,9 @@ export default function AssistantChat() {
 
   async function send(value: string, callback = false, label = value) {
     const message = value.trim();
-    if (!message || busy) return;
+    // Freno en el cliente: evita ráfagas por doble clic o por un script en la página.
+    if (!message || busy || Date.now() - lastSend.current < 1200) return;
+    lastSend.current = Date.now();
     setMsgs((m) => [...m.map((x) => ({ ...x, buttons: undefined })), { from: 'me', text: label.trim() }]);
     setText('');
     setBusy(true);
@@ -93,12 +126,15 @@ export default function AssistantChat() {
       const res = await fetch(`${API}/api/v1/chat/web`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ visitor: visitorId(), text: message, callback })
+        body: JSON.stringify({ visitor: visitorId(), text: message, callback }),
+        signal: AbortSignal.timeout(20000)
       });
       if (res.status === 429) return setMsgs((m) => [...m, TOO_MANY]);
       if (!res.ok) return setMsgs((m) => [...m, UNAVAILABLE]);
-      const data = (await res.json()) as { messages?: { text: string; buttons?: Button[][] }[] };
-      const replies = (data.messages ?? []).map<Msg>((r) => ({ from: 'bot', text: r.text, buttons: r.buttons }));
+      const data = (await res.json()) as { messages?: unknown };
+      const replies = (Array.isArray(data.messages) ? data.messages : [])
+        .map((r) => cleanMsg({ ...r, from: 'bot' }))
+        .filter((m): m is Msg => !!m);
       setMsgs((m) => [...m, ...(replies.length ? replies : [UNAVAILABLE])]);
     } catch {
       setMsgs((m) => [...m, UNAVAILABLE]);
@@ -108,7 +144,7 @@ export default function AssistantChat() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 font-sans">
+    <div data-clarity-mask="True" className="fixed bottom-4 right-4 z-50 font-sans">
       {open ? (
         <section
           role="dialog"
@@ -141,7 +177,7 @@ export default function AssistantChat() {
                 >
                   {m.text}
                 </p>
-                {m.buttons?.flat().map((b) => (
+                {m.buttons?.map((b) => (
                   <button
                     key={b.data}
                     type="button"
@@ -210,5 +246,27 @@ export default function AssistantChat() {
         </button>
       )}
     </div>
+  );
+}
+
+// Un fallo del chat nunca debe dejar el sitio en blanco: el componente vive en el layout raíz.
+class Boundary extends React.Component<{ children: React.ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.error('Chat del asistente:', error);
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
+export default function AssistantChat() {
+  return (
+    <Boundary>
+      <Chat />
+    </Boundary>
   );
 }
