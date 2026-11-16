@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { Sparkles, Mail, Phone, Lock, AlertCircle, CheckCircle } from 'lucide-react';
 import { MarketingEvent } from '../types';
+import { captureUtm } from '@/lib/utm';
 
 interface ContactFormProps {
   badgeText?: string;
@@ -100,7 +101,8 @@ export default function ContactForm({
       Mobile: (fd.get('Mobile') as string) || '',
       Company: (fd.get('Company') as string) || '',
       Description: (fd.get('Description') as string) || '',
-      source: 'main'
+      source: 'main',
+      ...captureUtm()
     };
 
     try {

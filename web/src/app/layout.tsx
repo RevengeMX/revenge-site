@@ -7,8 +7,10 @@ import { SanityLive, sanityFetch } from "@/sanity/lib/live";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { draftMode } from "next/headers";
 import { DisableDraftMode } from "@/components/DisableDraftMode";
+import UtmCapture from "@/components/UtmCapture";
 import { defineQuery } from "next-sanity";
 import { GTM_ID, GA4_ID } from "@/lib/gtm";
+import AssistantChat from "@/components/AssistantChat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +57,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {children}
+        <UtmCapture />
         {/* Renders for every visitor, not just draft mode: this is what lets
             published content changes reach the public site without SSR or a
             webhook — Sanity's Live Content API pushes a revalidation the
@@ -66,6 +69,7 @@ export default async function RootLayout({
             <DisableDraftMode />
           </>
         )}
+        <AssistantChat />
       </body>
       <GoogleTagManager gtmId={GTM_ID} />
       <GoogleAnalytics gaId={GA4_ID} />
