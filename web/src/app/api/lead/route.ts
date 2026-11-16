@@ -11,7 +11,13 @@ interface LeadPayload {
   Company?: string;
   Description?: string;
   source?: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
 }
+
+// El CRM acepta hasta 80 caracteres; vacío se omite.
+const utm = (value?: string) => (typeof value === 'string' ? value.trim().slice(0, 80) || undefined : undefined);
 
 const SOURCE_LABELS: Record<string, string> = {
   main: 'Sitio principal (revengemx.com)',
@@ -61,7 +67,10 @@ export async function POST(req: Request) {
         phone: body.Mobile?.trim() || '',
         company_name: body.Company?.trim() || '',
         message,
-        source: 'web'
+        source: 'web',
+        utm_source: utm(body.utm_source),
+        utm_medium: utm(body.utm_medium),
+        utm_campaign: utm(body.utm_campaign)
       }),
       cache: 'no-store'
     });

@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { Sparkles, Mail, Phone, AlertCircle, CheckCircle, ArrowRight } from 'lucide-react';
 import { MarketingEvent } from '../../types';
+import { captureUtm } from '@/lib/utm';
 
 interface ProductCtaProps {
   badgeText?: string;
@@ -68,7 +69,8 @@ export default function ProductCta({
       Mobile: (fd.get('Mobile') as string) || '',
       Company: (fd.get('Company') as string) || '',
       Description: (fd.get('Description') as string) || '',
-      source: 'checkapp'
+      source: 'checkapp',
+      ...captureUtm()
     };
 
     try {
