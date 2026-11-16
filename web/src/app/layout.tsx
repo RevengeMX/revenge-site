@@ -9,6 +9,7 @@ import { draftMode } from "next/headers";
 import { DisableDraftMode } from "@/components/DisableDraftMode";
 import { defineQuery } from "next-sanity";
 import { GTM_ID, GA4_ID } from "@/lib/gtm";
+import AssistantChat from "@/components/AssistantChat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,6 +67,7 @@ export default async function RootLayout({
             <DisableDraftMode />
           </>
         )}
+        <AssistantChat />
       </body>
       <GoogleTagManager gtmId={GTM_ID} />
       <GoogleAnalytics gaId={GA4_ID} />
